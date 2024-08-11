@@ -95,7 +95,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeScratchNorm, SchemeScratchSel }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeStatus, SchemeTagsSel, SchemeTagsNorm, SchemeInfoSel, SchemeInfoNorm, SchemeScratchNorm, SchemeScratchSel }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetSystemTray, NetSystemTrayOP, NetSystemTrayOrientation, NetSystemTrayOrientationHorz,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
@@ -1031,7 +1031,8 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 
 			text[i] = '\0';
 			w = TEXTW(text) - lrpad;
-			drw_text(drw, x, 0, w, bh, 0, text, 0);
+			// drw_text(drw, x, 0, w, bh, 0, text, 0);
+      drw_text(drw, x, vertpadbar / 2, w, bh - vertpadbar, 0, text, 0);
 
 			x += w;
 
@@ -1061,7 +1062,9 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 					while (text[++i] != ',');
 					int rh = atoi(text + ++i);
 
-					drw_rect(drw, rx + x, ry, rw, rh, 1, 0);
+					// drw_rect(drw, rx + x, ry, rw, rh, 1, 0);
+          drw_rect(drw, rx + x, ry + vertpadbar / 2, rw,
+                   MIN(rh, bh - vertpadbar), 1, 0);
 				} else if (text[i] == 'f') {
 					x += atoi(text + ++i);
 				}
@@ -1078,7 +1081,7 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 		drw_text(drw, x, 0, w, bh, 0, text, 0);
 	}
 
-	drw_setscheme(drw, scheme[SchemeNorm]);
+	drw_setscheme(drw, scheme[SchemeStatus]);
 	free(p);
 
 	return ret;
@@ -1116,22 +1119,26 @@ drawbar(Monitor *m)
 		if(!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
 			continue;
 		w = TEXTW(tags[i]);
-		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
+		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeTagsSel : SchemeTagsNorm]);
 		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
 		x += w;
 	}
 	w = TEXTW(m->ltsymbol);
-	drw_setscheme(drw, scheme[SchemeNorm]);
+	drw_setscheme(drw, scheme[SchemeTagsNorm]);
 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
 
 	if ((w = m->ww - tw - stw - x) > bh) {
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
 			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0);
+      drw_text(drw, x, vertpadbar / 2, w , bh - vertpadbar, 0, m->sel->name,
+               0);
 			if (m->sel->isfloating)
-				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
+				// drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
+        drw_rect(drw, x + boxs, boxs + vertpadbar / 2, boxw, boxw,
+                 m->sel->isfixed, 0);
 		} else {
-			drw_setscheme(drw, scheme[SchemeNorm]);
+			drw_setscheme(drw, scheme[SchemeInfoNorm]);
 			drw_rect(drw, x, 0, w, bh, 1, 1);
 		}
 	}
@@ -1464,9 +1471,9 @@ loadxrdb()
           XRDB_LOAD_COLOR("dwm.color0", normbordercolor);
           XRDB_LOAD_COLOR("dwm.color8", selbordercolor);
           XRDB_LOAD_COLOR("dwm.color0", normbgcolor);
-          XRDB_LOAD_COLOR("dwm.color6", normfgcolor);
+          XRDB_LOAD_COLOR("dwm.color8", normfgcolor);
           XRDB_LOAD_COLOR("dwm.color0", selfgcolor);
-          XRDB_LOAD_COLOR("dwm.color14", selbgcolor);
+          XRDB_LOAD_COLOR("dwm.color1", selbgcolor);
           XRDB_LOAD_COLOR("dwm.color2", selscrbordercolor);
           XRDB_LOAD_COLOR("dwm.color0", normscrbordercolor);
       }
