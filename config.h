@@ -1,8 +1,8 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx  = 3;        /* border pixel of windows */
-static const unsigned int gappx     = 5;        /* gaps between windows */
+static const unsigned int borderpx  = 2;        /* border pixel of windows */
+static const unsigned int gappx     = 8;        /* gaps between windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
 static const int previewbar         = 1;        /* show the bar in the preview window */
@@ -20,10 +20,14 @@ static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
 static char selbordercolor[]        = "#005577";
 static char selbgcolor[]            = "#005577";
+static char normscrbordercolor[]         = "#FF0000";
+static char selscrbordercolor[]      = "#FF8800";
 static char *colors[][3] = {
-       /*               fg           bg           border   */
-       [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
-       [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
+        /*               fg           bg           border   */
+        [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
+        [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
+      	[SchemeScratchSel]  = { selfgcolor, selbgcolor,   selscrbordercolor },
+        [SchemeScratchNorm] = { normfgcolor, normbgcolor,  normscrbordercolor },
 };
 
 /* autostart applications */
@@ -44,11 +48,21 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
-	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1 },
-	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
-	{ "St",      NULL,     NULL,           0,         0,          1,           0,        -1 },
-	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
+	/* class              instance    title           tags mask     isfloating  isterminal  noswallow  monitor   scratch key */
+	{ "Nsxiv",            NULL,       NULL,           0,            1,          0,          0,         -1,       0 },
+	{ "neovim",           NULL,       NULL,           1 << 1,       0,          0,          0,         -1,       0 },
+	{ "Emacs",            NULL,       NULL,           1 << 2,       0,          0,          0,         -1,       0 },
+	{ "qutebrowser",      NULL,       NULL,           1 << 3,       0,          0,          0,         -1,       0 },
+	{ "vesktop",          NULL,       NULL,           1 << 4,       0,          0,          0,         -1,       0 },
+	{ "Spotify",          NULL,       NULL,           1 << 5,       0,          0,          0,         -1,       0 },
+	{ "Chromium",         NULL,       NULL,           1 << 6,       0,          0,          0,         -1,       0 },
+	{ "Nemo",             NULL,       NULL,           0,            0,          1,          0,         -1,       0 },
+	{ "St",               NULL,       NULL,           0,            0,          1,          0,         -1,       0 },
+	{ NULL,               NULL,       "spterm",       0,            1,          1,          0,         -1,       't' },
+	{ NULL,               NULL,       "random",       0,            1,          0,          1,         -1,       's' },
+	{ NULL,               NULL,       "spmix",        0,            1,          0,          1,         -1,       'a' },
+	{ NULL,               NULL,       "sptop",        0,            1,          0,          1,         -1,       'p' },
+	{ NULL,               NULL,       "Event Tester", 0,            0,          0,          1,         -1,        0  }, /* xev */
 };
 
 /* layout(s) */
@@ -78,6 +92,12 @@ static const Layout layouts[] = {
 /* commands */
 static const char *termcmd[]  = { "st", NULL };
 
+/* scratchpads */
+static const char *sptermcmd[] = {"t", "st", "-t", "spterm" , "-g", "120x28", NULL};
+static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "120x28", "-e", "btop", NULL};
+static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "120x28", "-e", "pulsemixer", NULL};
+static const char *sprandomcmd[] = { "s",  NULL };
+
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_w,                     spawn,          SHCMD("set-wallpaper") },
@@ -105,6 +125,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+	{ MODKEY|ShiftMask,             XK_f,      togglefullscr,  {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
@@ -126,6 +147,14 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_Escape,      quit,           {0} },
 	{ MODKEY|ControlMask|ShiftMask, XK_Escape,      quit,           {1} }, 
+
+
+	{ MODKEY,                       XK_Escape,  togglescratch,  {.v = sptermcmd } },
+	{ MODKEY,                       XK_a,      togglescratch,  {.v = spmixcmd } },
+	{ MODKEY,                       XK_p,      togglescratch,  {.v = sptopcmd } },
+	{ MODKEY,                       XK_o,      togglescratch,  {.v = sprandomcmd } },
+	{ MODKEY|ShiftMask,             XK_o,      setscratch,     {.v = sprandomcmd } },
+	{ MODKEY|ControlMask,           XK_o,      removescratch,  {.v = sprandomcmd } },
 };
 
 /* button definitions */
