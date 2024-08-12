@@ -13,8 +13,8 @@ static const unsigned int systrayspacing = 2;   /* systray spacing */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
-static const int topbar             = 1;        /* 0 means bottom bar */ 
-static const char *fonts[]          = { "CaskaydiaCove Nerd Font:size=17" };
+static const int topbar             = 0;        /* 0 means bottom bar */ 
+static const char *fonts[]          = { "Terminess Nerd Font:size=17:style=semibold" };
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
 static const int vertpadbar         = 16;        /* vertical padding for statusbar */
 static char normbgcolor[]           = "#222222";
@@ -108,11 +108,25 @@ static const Layout layouts[] = {
 /* commands */
 static const char *termcmd[]  = { "st", NULL };
 
+static const char *volumecmd[3][5] = {
+	{ "wpctl", "set-volume", "@DEFAULT_SINK@", "0.05+", NULL },
+	{ "wpctl", "set-volume", "@DEFAULT_SINK@", "0.05-", NULL },
+	{ "wpctl", "set-mute", "@DEFAULT_SINK@", "toggle", NULL },
+};
+static const char *playerctlcmd[3][3] = {
+	{ "playerctl", "play-pause", NULL },
+	{ "playerctl", "next", NULL },
+	{ "playerctl", "previous", NULL },
+};
+
+
 /* scratchpads */
 static const char *sptermcmd[] = {"t", "st", "-t", "spterm" , "-g", "120x28", NULL};
 static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "120x28", "-e", "btop", NULL};
 static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "120x28", "-e", "pulsemixer", NULL};
 static const char *sprandomcmd[] = { "s",  NULL };
+
+
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -126,6 +140,12 @@ static const Key keys[] = {
 	{ShiftMask,                     XK_Print,       					spawn,          SHCMD("screenshot_dmenu_c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_n,            					spawn,          SHCMD("st -c neovim -e nvim")},
+	{ShiftMask,                     XK_F12,                   spawn,          {.v = volumecmd[0]} },
+	{ShiftMask,                     XK_F11,                   spawn,          {.v = volumecmd[1]} },
+ 	{ShiftMask,                     XK_F10,                   spawn,          {.v = volumecmd[2]} },
+	{ShiftMask,                     XK_F8,                    spawn,          {.v = playerctlcmd[0]} },
+ 	{ShiftMask,                     XK_F9,                    spawn,          {.v = playerctlcmd[1]} },
+ 	{ShiftMask,                     XK_F7,                    spawn,          {.v = playerctlcmd[2]} },
 	{ MODKEY,                       XK_b,       togglebar,      {0} },
 	{ MODKEY,                       XK_j,       focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,       focusstack,     {.i = -1 } },
