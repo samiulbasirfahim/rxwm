@@ -63,7 +63,7 @@ static const Rule rules[] = {
 	{ "neovim",           NULL,       NULL,           1 << 1,       0,          0,          0,         -1,       0 },
 	{ "Emacs",            NULL,       NULL,           1 << 2,       0,          0,          0,         -1,       0 },
 	{ "qutebrowser",      NULL,       NULL,           1 << 3,       0,          0,          0,         -1,       0 },
-	{ "vesktop",          NULL,       NULL,           1 << 4,       0,          0,          0,         -1,       0 },
+	{ "discord",          NULL,       NULL,           1 << 4,       0,          0,          0,         -1,       0 },
 	{ "Spotify",          NULL,       NULL,           1 << 5,       0,          0,          0,         -1,       0 },
 	{ "Chromium",         NULL,       NULL,           1 << 6,       0,          0,          0,         -1,       0 },
 	{ "Nemo",             NULL,       NULL,           0,            0,          1,          0,         -1,       0 },
