@@ -1599,14 +1599,24 @@ motionnotify(XEvent *e)
 {
 	static Monitor *mon = NULL;
 	Monitor *m;
+  Client *c;
 	XMotionEvent *ev = &e->xmotion;
 	unsigned int i, x;
 
+  m = selmon;
+
 	if (ev->window == selmon->barwin) {
 		i = x = 0;
-		do
+    unsigned int occ = 0;
+    for(c = m->clients; c; c = c->next){
+			occ |= c->tags == TAGMASK ? 0 : c->tags;
+    }
+		do {
+
+			if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
+				continue;
 			x += TEXTW(tags[i]);
-		while (ev->x >= x && ++i < LENGTH(tags));
+    }	while (ev->x >= x && ++i < LENGTH(tags));
 	/* FIXME when hovering the mouse over the tags and we view the tag,
 	 *       the preview window get's in the preview shot */
 
@@ -2755,9 +2765,15 @@ updatebars(void)
 	XClassHint ch = {"dwm", "dwm"};
 	for (m = mons; m; m = m->next) {
 		if (!m->tagwin) {
-			m->tagwin = XCreateWindow(dpy, root, m->wx, m->by + bh, m->mw / scalepreview,
-				m->mh / scalepreview, 0, DefaultDepth(dpy, screen), CopyFromParent,
-				DefaultVisual(dpy, screen), CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
+      if(topbar) {
+        m->tagwin = XCreateWindow(dpy, root, m->wx, m->by + bh, m->mw / scalepreview,
+          m->mh / scalepreview, 0, DefaultDepth(dpy, screen), CopyFromParent,
+          DefaultVisual(dpy, screen), CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
+      } else {
+        m->tagwin = XCreateWindow(dpy, root, m->wx, m->by - (m->mh / scalepreview), m->mw / scalepreview,
+          m->mh / scalepreview, 0, DefaultDepth(dpy, screen), CopyFromParent,
+          DefaultVisual(dpy, screen), CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
+      }
 			XDefineCursor(dpy, m->tagwin, cursor[CurNormal]->cursor);
 			XUnmapWindow(dpy, m->tagwin);
 		}
@@ -3422,17 +3438,42 @@ main(int argc, char *argv[])
 
 
 
-void shiftview(const Arg *arg) {
-  Arg shifted;
+void shiftview(const Arg *arg)
+{
+	Arg shifted;
+	Client *c;
+	unsigned int tagmask = 0;
 
-  if (arg->i > 0) // left circular shift
-    shifted.ui = (selmon->tagset[selmon->seltags] << arg->i) |
-                 (selmon->tagset[selmon->seltags] >> (LENGTH(tags) - arg->i));
+	for (c = selmon->clients; c; c = c->next)
+		#if SCRATCHPADS_PATCH
+		if (!(c->tags & SPTAGMASK))
+			tagmask = tagmask | c->tags;
+		#else
+		tagmask = tagmask | c->tags;
+		#endif // SCRATCHPADS_PATCH
 
-  else // right circular shift
-    shifted.ui = selmon->tagset[selmon->seltags] >> (-arg->i) |
-                 selmon->tagset[selmon->seltags] << (LENGTH(tags) + arg->i);
+	#if SCRATCHPADS_PATCH
+	shifted.ui = selmon->tagset[selmon->seltags] & ~SPTAGMASK;
+	#else
+	shifted.ui = selmon->tagset[selmon->seltags];
+	#endif // SCRATCHPADS_PATCH
+	if (arg->i > 0) // left circular shift
+		do {
+			shifted.ui = (shifted.ui << arg->i)
+			   | (shifted.ui >> (LENGTH(tags) - arg->i));
+			#if SCRATCHPADS_PATCH
+			shifted.ui &= ~SPTAGMASK;
+			#endif // SCRATCHPADS_PATCH
+		} while (tagmask && !(shifted.ui & tagmask));
+	else // right circular shift
+		do {
+			shifted.ui = (shifted.ui >> (- arg->i)
+			   | shifted.ui << (LENGTH(tags) + arg->i));
+			#if SCRATCHPADS_PATCH
+			shifted.ui &= ~SPTAGMASK;
+			#endif // SCRATCHPADS_PATCH
+		} while (tagmask && !(shifted.ui & tagmask));
 
-  view(&shifted);
+	view(&shifted);
 }
 
