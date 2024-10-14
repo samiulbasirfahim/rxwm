@@ -130,7 +130,7 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh, hintsvalid;
 	int bw, oldbw;
 	unsigned int tags;
-	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, issticky, isterminal, noswallow;
+	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, issticky, isterminal, noswallow, allowkill;
 	pid_t pid;
 	char scratchkey;
 	Client *next;
@@ -184,6 +184,7 @@ typedef struct {
 	const char *instance;
 	const char *title;
 	unsigned int tags;
+    int allowkill;
 	int isfloating;
 	int isterminal;
 	int noswallow;
@@ -281,6 +282,7 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
+static void toggleallowkill(const Arg *arg);
 static void togglescratch(const Arg *arg);
 static void togglefullscr(const Arg *arg);
 static void togglesticky(const Arg *arg);
@@ -419,6 +421,7 @@ applyrules(Client *c)
 	/* rule matching */
 	c->isfloating = 0;
 	c->tags = 0;
+  c->allowkill = allowkill;
 	c->scratchkey = 0;
 	XGetClassHint(dpy, c->win, &ch);
 	class    = ch.res_class ? ch.res_class : broken;
@@ -434,6 +437,7 @@ applyrules(Client *c)
 			c->noswallow  = r->noswallow;
 			c->isfloating = r->isfloating;
 			c->tags |= r->tags;
+      c->allowkill = r->allowkill;
 			c->scratchkey = r->scratchkey;
 			for (m = mons; m && m->num != r->monitor; m = m->next);
 			if (m)
@@ -1442,7 +1446,7 @@ keypress(XEvent *e)
 void
 killclient(const Arg *arg)
 {
-	if (!selmon->sel)
+	if (!selmon->sel || !selmon->sel->allowkill)
 		return;
 
 	if (!sendevent(selmon->sel->win, wmatom[WMDelete], NoEventMask, wmatom[WMDelete], CurrentTime, 0 , 0, 0)) {
@@ -1475,12 +1479,12 @@ loadxrdb()
 
       if (xrdb != NULL) {
           XRDB_LOAD_COLOR("dwm.color0", normbordercolor);
-          XRDB_LOAD_COLOR("dwm.color2", selbordercolor);
+          XRDB_LOAD_COLOR("dwm.color1", selbordercolor);
           XRDB_LOAD_COLOR("dwm.color0", normbgcolor);
-          XRDB_LOAD_COLOR("dwm.color2", normfgcolor);
+          XRDB_LOAD_COLOR("dwm.color1", normfgcolor);
           XRDB_LOAD_COLOR("dwm.color0", selfgcolor);
-          XRDB_LOAD_COLOR("dwm.color2", selbgcolor);
-          XRDB_LOAD_COLOR("dwm.color1", selscrbordercolor);
+          XRDB_LOAD_COLOR("dwm.color1", selbgcolor);
+          XRDB_LOAD_COLOR("dwm.color2", selscrbordercolor);
           XRDB_LOAD_COLOR("dwm.color0", normscrbordercolor);
       }
     }
@@ -2507,6 +2511,13 @@ togglebar(const Arg *arg)
 		XConfigureWindow(dpy, systray->win, CWY, &wc);
 	}
 	arrange(selmon);
+}
+
+void
+toggleallowkill(const Arg *arg)
+{
+    if (!selmon->sel) return;
+    selmon->sel->allowkill = !selmon->sel->allowkill;
 }
 
 void

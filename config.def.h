@@ -10,11 +10,12 @@ static const int swallowfloating    = 0;        /* 1 means swallow floating wind
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayonleft  = 0;   /* 0: systray in the right corner, >0: systray on left of status text */
 static const unsigned int systrayspacing = 10;   /* systray spacing */
-static const unsigned int systrayiconsize = 14; /* systray icon size in px */
+static const unsigned int systrayiconsize = 16; /* systray icon size in px */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 0;        /* 0 means bottom bar */ 
+static const int allowkill          = 1;        /* allow killing clients by default? */
 static const char *fonts[]          = { "Terminess Nerd Font:size=17:style=semibold" };
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
 static const int vertpadbar         = 16;        /* vertical padding for statusbar */
@@ -35,7 +36,6 @@ static char *colors[][3] = {
         [SchemeTagsNorm]  = { normfgcolor, normbgcolor, normbordercolor  }, // Tagbar left unselected {text,background,not used but cannot be empty}
         [SchemeInfoSel]   = { selfgcolor, selbgcolor,  selbordercolor  }, // infobar middle  selected {text,background,not used but cannot be empty}
         [SchemeInfoNorm]  = { normfgcolor, normbgcolor,  normbordercolor  }, // infobar middle  unselected {text,background,not used but cannot be empty}
-
       	[SchemeScratchSel]  = { selfgcolor, selbgcolor,   selscrbordercolor },
         [SchemeScratchNorm] = { normfgcolor, normbgcolor,  normscrbordercolor },
 };
@@ -46,6 +46,7 @@ static const char *const autostart[] = {
   "dwmblocks", NULL,
   "pipewire", NULL,
   "greenclip", "daemon", NULL,
+  "picom", "-b", NULL,
    NULL /* terminate */
 };
 
@@ -57,21 +58,19 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class              instance    title           tags mask     isfloating  isterminal  noswallow  monitor   scratch key */
-	{ "Nsxiv",            NULL,       NULL,           0,            1,          0,          0,         -1,       0 },
-	{ "neovim",           NULL,       NULL,           1 << 1,       0,          0,          0,         -1,       0 },
-	{ "Emacs",            NULL,       NULL,           1 << 2,       0,          0,          0,         -1,       0 },
-	{ "qutebrowser",      NULL,       NULL,           1 << 3,       0,          0,          0,         -1,       0 },
-	{ "discord",          NULL,       NULL,           1 << 4,       0,          0,          0,         -1,       0 },
-	{ "Spotify",          NULL,       NULL,           1 << 5,       0,          0,          0,         -1,       0 },
-	{ "Chromium",         NULL,       NULL,           1 << 6,       0,          0,          0,         -1,       0 },
-	{ "Nemo",             NULL,       NULL,           0,            0,          1,          0,         -1,       0 },
-	{ "St",               NULL,       NULL,           0,            0,          1,          0,         -1,       0 },
-	{ NULL,               NULL,       "spterm",       0,            1,          1,          0,         -1,       't' },
-	{ NULL,               NULL,       "random",       0,            1,          0,          1,         -1,       's' },
-	{ NULL,               NULL,       "spmix",        0,            1,          0,          1,         -1,       'a' },
-	{ NULL,               NULL,       "sptop",        0,            1,          0,          1,         -1,       'p' },
-	{ NULL,               NULL,       "Event Tester", 0,            0,          0,          1,         -1,        0  }, /* xev */
+	/* class              instance    title           tags mask     allowkill   isfloating  isterminal  noswallow  monitor   scratch key */
+	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          0,          0,         -1,       0 },
+	{ "Weston Compositor",NULL,       NULL,           0,            1,          1,          0,          0,         -1,       0 },
+	{ "neovide",          NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
+	{ "librewolf",        NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
+	{ "qutebrowser",      NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
+	{ "Nemo",             NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
+	{ "st-256color",      NULL,       NULL,           0,            1,          0,          1,        0,         -1,       0 },
+	{ NULL,               NULL,       "spterm",       0,            1,          1,          1,          0,         0,       't' },
+	{ NULL,               NULL,       "random",       0,            1,          1,          0,          1,         0,       's' },
+	{ NULL,               NULL,       "spmix",        0,            1,          1,          0,          1,         0,       'a' },
+	{ NULL,               NULL,       "sptop",        0,            1,          1,          0,          1,         0,       'p' },
+	{ NULL,               NULL,       "Event Tester", 0,            1,          0,          0,          1,         -1,        0  }, /* xev */
 };
 
 /* layout(s) */
@@ -131,15 +130,13 @@ static const char *sprandomcmd[] = { "s",  NULL };
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_w,                     spawn,          SHCMD("set-wallpaper") },
-	{ MODKEY,                       XK_z,                     spawn,          SHCMD("rofi -show drun -show-icons -theme ~/.config/rofi/launcher.rasi") },
-	{ MODKEY,                       XK_c,                     spawn,          SHCMD("rofi -show calc -modi calc -no-sort -no-show-match -theme ~/.config/rofi/launcher.rasi") },
-	{ MODKEY,                       XK_e,                     spawn,          SHCMD("rofi -modi emoji -show emoji -theme ~/.config/rofi/launcher.rasi") },
-	{ MODKEY,                       XK_x,                     spawn,          SHCMD("rofi -show p -modi p:~/.config/rofi/off.sh -theme ~/.config/rofi/launcher.rasi")},
-	{ MODKEY,                       XK_v,                     spawn,          SHCMD("rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}' -theme ~/.config/rofi/launcher.rasi")},
+	{ MODKEY,                       XK_z,                     spawn,          SHCMD("launcher") },
+	{ MODKEY,                       XK_x,                     spawn,          SHCMD("powermenu")},
+	{ MODKEY,                       XK_v,                     spawn,          SHCMD("greenclip print | grep . | dmenu | xargs -r -d'\n' -I '{}' greenclip print '{}'")},
 	{0,                             XK_Print,       					spawn,          SHCMD("screenshot_dmenu")},
 	{ShiftMask,                     XK_Print,       					spawn,          SHCMD("screenshot_dmenu_c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_n,            					spawn,          SHCMD("st -c neovim -e nvim")},
+	{ MODKEY,                       XK_n,            					spawn,          SHCMD("neovide")},
 	{ShiftMask,                     XK_F12,                   spawn,          {.v = volumecmd[0]} },
 	{ShiftMask,                     XK_F11,                   spawn,          {.v = volumecmd[1]} },
  	{ShiftMask,                     XK_F10,                   spawn,          {.v = volumecmd[2]} },
