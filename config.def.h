@@ -4,7 +4,7 @@
 static const unsigned int borderpx  = 3;        /* border pixel of windows */
 static const unsigned int gappx     = 10;        /* gaps between windows */
 static const unsigned int snap      = 32;       /* snap pixel */
-static const int scalepreview       = 3;        /* preview scaling (display w and h / scalepreview) */
+static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
 static const int previewbar         = 0;        /* show the bar in the preview window */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
@@ -16,7 +16,7 @@ static const int showsystray        = 1;        /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 0;        /* 0 means bottom bar */ 
 static const int allowkill          = 1;        /* allow killing clients by default? */
-static const char *fonts[]          = { "Terminess Nerd Font:size=17:style=semibold" };
+static const char *fonts[]          = { "IosevkaTermSlab Nerd Font:size=15:style=semibold,italic" };
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
 static const int vertpadbar         = 16;        /* vertical padding for statusbar */
 static char normbgcolor[]           = "#222222";
@@ -42,11 +42,11 @@ static char *colors[][3] = {
 
 /* autostart applications */
 static const char *const autostart[] = {
+  "picom", "-b", NULL,
   "load-wallpaper", NULL,
   "dwmblocks", NULL,
-  "pipewire", NULL,
+  // "pipewire", NULL,
   "greenclip", "daemon", NULL,
-  "picom", "-b", NULL,
    NULL /* terminate */
 };
 
@@ -61,14 +61,17 @@ static const Rule rules[] = {
 	/* class              instance    title           tags mask     allowkill   isfloating  isterminal  noswallow  monitor   scratch key */
 	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          0,          0,         -1,       0 },
 	{ "Weston Compositor",NULL,       NULL,           0,            1,          1,          0,          0,         -1,       0 },
-	{ "neovide",          NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
+	{ "neovim",          NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
 	{ "librewolf",        NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
 	{ "qutebrowser",      NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
+	{ "discord",          NULL,       NULL,           1 << 4,       1,          0,          0,          0,         -1,       0 },
+	{ "Spotify",          NULL,       NULL,           1 << 5,       0,          0,          0,          0,         -1,       0 },
 	{ "Nemo",             NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
 	{ "st-256color",      NULL,       NULL,           0,            1,          0,          1,        0,         -1,       0 },
 	{ NULL,               NULL,       "spterm",       0,            1,          1,          1,          0,         0,       't' },
 	{ NULL,               NULL,       "random",       0,            1,          1,          0,          1,         0,       's' },
 	{ NULL,               NULL,       "spmix",        0,            1,          1,          0,          1,         0,       'a' },
+	{ NULL,               NULL,       "spcal",        0,            1,          1,          0,          1,         0,       'm' },
 	{ NULL,               NULL,       "sptop",        0,            1,          1,          0,          1,         0,       'p' },
 	{ NULL,               NULL,       "Event Tester", 0,            1,          0,          0,          1,         -1,        0  }, /* xev */
 };
@@ -120,9 +123,10 @@ static const char *playerctlcmd[3][3] = {
 
 
 /* scratchpads */
-static const char *sptermcmd[] = {"t", "st", "-t", "spterm" , "-g", "120x28", NULL};
-static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "120x28", "-e", "btop", NULL};
-static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "120x28", "-e", "pulsemixer", NULL};
+static const char *sptermcmd[] = {"t", "st", "-t", "spterm" , "-g", "110x26", NULL};
+static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "110x26", "-e", "btop", NULL};
+static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "110x26", "-e", "pulsemixer", NULL};
+static const char *spcalcmd[]  = {"m", "st", "-t", "spcal", "-g", "110x26", "-e", "calcurse", NULL};
 static const char *sprandomcmd[] = { "s",  NULL };
 
 
@@ -133,10 +137,10 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_z,                     spawn,          SHCMD("launcher") },
 	{ MODKEY,                       XK_x,                     spawn,          SHCMD("powermenu")},
 	{ MODKEY,                       XK_v,                     spawn,          SHCMD("greenclip print | grep . | dmenu | xargs -r -d'\n' -I '{}' greenclip print '{}'")},
-	{0,                             XK_Print,       					spawn,          SHCMD("screenshot_dmenu")},
-	{ShiftMask,                     XK_Print,       					spawn,          SHCMD("screenshot_dmenu_c")},
+	{0,                             XK_Print,       		  spawn,          SHCMD("screenshot_dmenu")},
+	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("screenshot_dmenu_c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_n,            					spawn,          SHCMD("neovide")},
+	{ MODKEY,                       XK_n,                     spawn,          SHCMD("st -c neovim -e nvim")},
 	{ShiftMask,                     XK_F12,                   spawn,          {.v = volumecmd[0]} },
 	{ShiftMask,                     XK_F11,                   spawn,          {.v = volumecmd[1]} },
  	{ShiftMask,                     XK_F10,                   spawn,          {.v = volumecmd[2]} },
@@ -191,6 +195,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_Escape,  togglescratch,  {.v = sptermcmd } },
 	{ MODKEY,                       XK_a,      togglescratch,  {.v = spmixcmd } },
 	{ MODKEY,                       XK_p,      togglescratch,  {.v = sptopcmd } },
+	{ MODKEY,                       XK_c,      togglescratch,  {.v = spcalcmd } },
 	{ MODKEY,                       XK_o,      togglescratch,  {.v = sprandomcmd } },
 	{ MODKEY|ShiftMask,             XK_o,      setscratch,     {.v = sprandomcmd } },
 	{ MODKEY|ControlMask,           XK_o,      removescratch,  {.v = sprandomcmd } },
