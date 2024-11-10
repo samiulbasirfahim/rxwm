@@ -14,11 +14,15 @@ static const unsigned int systrayiconsize = 16; /* systray icon size in px */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
+static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
 static const int topbar             = 0;        /* 0 means bottom bar */ 
 static const int allowkill          = 1;        /* allow killing clients by default? */
-static const char *fonts[]          = { "IosevkaTermSlab Nerd Font:size=15:style=semibold" };
+static const char *fonts[]          = { 
+    /* "IosevkaTermSlab Nerd Font:size=14:style=oblique" */
+"IosevkaTermSlab Nerd Font:size=14:style=semibold"
+};
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
-static const int vertpadbar         = 16;        /* vertical padding for statusbar */
+static const int vertpadbar         = 12;        /* vertical padding for statusbar */
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
@@ -78,24 +82,24 @@ static const Rule rules[] = {
 };
 
 /* layout(s) */
-static const float mfact     = 0.66; /* factor of master area size [0.05..0.95] */
+static const float mfact     = 0.6; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 
-// static const Layout layouts[] = {
-// 	/* symbol     arrange function */
-// 	{ "[]=",      tile },    /* first entry is default */
-// 	{ "><>",      NULL },    /* no layout function means floating behavior */
-// 	{ "[M]",      monocle },
-// };
-
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "󰕰",      tile },    /* first entry is default */
-	{ "󰖲",      NULL },    /* no layout function means floating behavior */
-	{ "󰝤",      monocle },
+	{ "[]=",      tile },    /* first entry is default */
+	{ "><>",      NULL },    /* no layout function means floating behavior */
+	{ "[M]",      monocle },
 };
+
+/* static const Layout layouts[] = { */
+/* 	/* symbol     arrange function */ 
+/* 	{ "󰕰",      tile },    /* first entry is default */
+/* 	{ "󰖲",      NULL },    /* no layout function means floating behavior */
+/* 	{ "󰝤",      monocle }, */
+/* }; */
 
 /* key definitions */
 #define MODKEY Mod4Mask
@@ -125,10 +129,10 @@ static const char *playerctlcmd[3][3] = {
 
 
 /* scratchpads */
-static const char *sptermcmd[] = {"t", "st", "-t", "spterm","-g", "115x24", NULL};
-static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "115x24", "-e", "btop", NULL};
-static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "115x24", "-e", "pulsemixer", NULL};
-static const char *spcalcmd[]  = {"m", "st", "-t", "spcal", "-g", "115x24", "-e", "calcurse", NULL};
+static const char *sptermcmd[] = {"t", "st", "-t", "spterm","-g", "120x24", NULL};
+static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "120x24", "-e", "btop", NULL};
+static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "120x24", "-e", "pulsemixer", NULL};
+static const char *spcalcmd[]  = {"m", "st", "-t", "spcal", "-g", "120x24", "-e", "calcurse", NULL};
 static const char *sprandomcmd[] = { "s",  NULL };
 
 
@@ -137,11 +141,12 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_w,                     spawn,          SHCMD("set-wallpaper") },
 	{ MODKEY,                       XK_z,                     spawn,          SHCMD("launcher") },
 	{ MODKEY,                       XK_x,                     spawn,          SHCMD("powermenu")},
+	{ MODKEY,                       XK_e,                     spawn,          SHCMD("anime")},
 	{ MODKEY,                       XK_v,                     spawn,          SHCMD("greenclip print | grep . | dmenu | xargs -r -d'\n' -I '{}' greenclip print '{}'")},
 	{0,                             XK_Print,       		  spawn,          SHCMD("screenshot_dmenu")},
 	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("screenshot_dmenu_c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_n,                     spawn,          SHCMD("st -c neovim -e load-nvim")},
+	{ MODKEY,                       XK_n,                     spawn,          SHCMD("st -c neovim -e nvim")},
 	{ShiftMask,                     XK_F12,                   spawn,          {.v = volumecmd[0]} },
 	{ShiftMask,                     XK_F11,                   spawn,          {.v = volumecmd[1]} },
  	{ShiftMask,                     XK_F10,                   spawn,          {.v = volumecmd[2]} },
@@ -174,8 +179,8 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_comma,                 tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period,                tagmon,         {.i = +1 } },
 
-	{ MODKEY,                       XK_minus,                 setgaps,        {.i = -1 } },
-	{ MODKEY,                       XK_equal,                 setgaps,        {.i = +1 } },
+	{ MODKEY,                       XK_minus,                 setgaps,        {.i = -2 } },
+	{ MODKEY,                       XK_equal,                 setgaps,        {.i = +2 } },
 	{ MODKEY|ShiftMask,             XK_minus,                 setgaps,        {.i = 0  } },
 	{ MODKEY|ShiftMask,             XK_equal,                 setgaps,        {.i = -999 } },
 
@@ -208,7 +213,7 @@ static const Button buttons[] = {
 	/* click                event mask      button          function        argument */
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
-	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
+	{ ClkWinTitle,          0,              Button3,        zoom,           {0} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
