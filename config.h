@@ -18,8 +18,7 @@ static const int border_when_only   = 0;        /* 0 means no border for single 
 static const int topbar             = 0;        /* 0 means bottom bar */ 
 static const int allowkill          = 1;        /* allow killing clients by default? */
 static const char *fonts[]          = { 
-    /* "IosevkaTermSlab Nerd Font:size=14:style=oblique" */
-"IosevkaTermSlab Nerd Font:size=14:style=semibold"
+    "IosevkaTermSlab Nerd Font:size=14:style=semibold"
 };
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
 static const int vertpadbar         = 12;        /* vertical padding for statusbar */
