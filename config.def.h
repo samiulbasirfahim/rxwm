@@ -2,7 +2,7 @@
 
 /* appearance */
 static const unsigned int borderpx  = 3;        /* border pixel of windows */
-static const unsigned int gappx     = 8;        /* gaps between windows */
+static const unsigned int gappx     = 12;        /* gaps between windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
 static const int previewbar         = 0;        /* show the bar in the preview window */
@@ -72,11 +72,12 @@ static const Rule rules[] = {
 	{ "steam",            NULL,       NULL,           1 << 6,       1,          1,          0,          0,         -1,       0 },
 	{ "Nemo",             NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
 	{ "St",               NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
-	{ NULL,               NULL,       "spterm",       0,            1,          1,          1,          0,         0,       't' },
-	{ NULL,               NULL,       "random",       0,            1,          1,          0,          1,         0,       's' },
-	{ NULL,               NULL,       "spmix",        0,            1,          1,          0,          1,         0,       'a' },
-	{ NULL,               NULL,       "spcal",        0,            1,          1,          0,          1,         0,       'm' },
-	{ NULL,               NULL,       "sptop",        0,            1,          1,          0,          1,         0,       'p' },
+	{ NULL,               NULL,       "spterm",       0,            1,          1,          1,          0,         -1,       't' },
+	{ NULL,               NULL,       "random",       0,            1,          1,          0,          1,         -1,       'o' },
+	{ NULL,               NULL,       "random1",      0,            1,          1,          0,          1,         -1,       'i' },
+	{ NULL,               NULL,       "spmix",        0,            1,          1,          0,          1,         -1,       'a' },
+	{ NULL,               NULL,       "spcal",        0,            1,          1,          0,          1,         -1,       'm' },
+	{ NULL,               NULL,       "sptop",        0,            1,          1,          0,          1,         -1,       'p' },
 	{ NULL,               NULL,       "Event Tester", 0,            1,          0,          0,          1,         -1,        0  }, /* xev */
 };
 
@@ -132,7 +133,8 @@ static const char *sptermcmd[] = {"t", "st", "-t", "spterm","-g", "120x24", NULL
 static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "120x24", "-e", "btop", NULL};
 static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "120x24", "-e", "pulsemixer", NULL};
 static const char *spcalcmd[]  = {"m", "st", "-t", "spcal", "-g", "120x24", "-e", "calcurse", NULL};
-static const char *sprandomcmd[] = { "s",  NULL };
+static const char *sprandomcmd[] = { "o",  NULL };
+static const char *sprandom1cmd[] = { "i",  NULL };
 
 
 static const Key keys[] = {
@@ -140,8 +142,9 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_w,                     spawn,          SHCMD("set-wallpaper") },
 	{ MODKEY,                       XK_z,                     spawn,          SHCMD("launcher") },
 	{ MODKEY,                       XK_x,                     spawn,          SHCMD("powermenu")},
-	{ MODKEY,                       XK_e,                     spawn,          SHCMD("anime")},
-	{ MODKEY,                       XK_v,                     spawn,          SHCMD("greenclip print | grep . | dmenu | xargs -r -d'\n' -I '{}' greenclip print '{}'")},
+	{ MODKEY|ShiftMask,             XK_e,                     spawn,          SHCMD("anime")},
+	{ MODKEY|ShiftMask,             XK_t,                     spawn,          SHCMD("theme_picker.sh")},
+	{ MODKEY,                       XK_v,                     spawn,          SHCMD("greenclip print | grep . | dmenu -m 0 | xargs -r -d'\n' -I '{}' greenclip print '{}'")},
 	{0,                             XK_Print,       		  spawn,          SHCMD("screenshot_dmenu")},
 	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("screenshot_dmenu_c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
@@ -155,7 +158,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_b,                     togglebar,      {0} },
 	{ MODKEY,                       XK_j,                     focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,                     focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,                     incnmaster,     {.i = +1 } },
+	{ MODKEY,                       XK_u,                     incnmaster,     {.i = +1 } },
 	{ MODKEY,                       XK_d,                     incnmaster,     {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_h,                     setmfact,       {.f = -0.05} },
 	{ MODKEY|ShiftMask,             XK_l,                     setmfact,       {.f = +0.05} },
@@ -201,9 +204,15 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_a,      togglescratch,  {.v = spmixcmd } },
 	{ MODKEY,                       XK_p,      togglescratch,  {.v = sptopcmd } },
 	{ MODKEY,                       XK_c,      togglescratch,  {.v = spcalcmd } },
+
 	{ MODKEY,                       XK_o,      togglescratch,  {.v = sprandomcmd } },
 	{ MODKEY|ShiftMask,             XK_o,      setscratch,     {.v = sprandomcmd } },
 	{ MODKEY|ControlMask,           XK_o,      removescratch,  {.v = sprandomcmd } },
+
+	{ MODKEY,                       XK_i,      togglescratch,  {.v = sprandom1cmd } },
+	{ MODKEY|ShiftMask,             XK_i,      setscratch,     {.v = sprandom1cmd } },
+	{ MODKEY|ControlMask,           XK_i,      removescratch,  {.v = sprandom1cmd } },
+
 };
 
 /* button definitions */
