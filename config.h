@@ -2,11 +2,11 @@
 
 /* appearance */
 static const unsigned int borderpx  = 3;        /* border pixel of windows */
-static const unsigned int gappx     = 12;        /* gaps between windows */
+static const unsigned int gappx     = 14;        /* gaps between windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
 static const int previewbar         = 0;        /* show the bar in the preview window */
-static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
+static const int swallowfloating    = 1;        /* 1 means swallow floating windows by default */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayonleft  = 0;   /* 0: systray in the right corner, >0: systray on left of status text */
 static const unsigned int systrayspacing = 8;   /* systray spacing */
@@ -18,10 +18,10 @@ static const int border_when_only   = 0;        /* 0 means no border for single 
 static const int topbar             = 0;        /* 0 means bottom bar */ 
 static const int allowkill          = 1;        /* allow killing clients by default? */
 static const char *fonts[]          = { 
-    "IosevkaTermSlab Nerd Font:size=14:style=semibold"
+    "IosevkaTermSlab Nerd Font:size=13:style=semibold",
 };
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
-static const int vertpadbar         = 12;        /* vertical padding for statusbar */
+static const int vertpadbar         = 14;        /* vertical padding for statusbar */
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
@@ -48,7 +48,8 @@ static const char *const autostart[] = {
   "picom", "-b", NULL,
   "load-wallpaper", NULL,
   "dwmblocks", NULL,
-  "dunst", NULL,
+  "wired", NULL,
+  /* "Discord", NULL, */
   "greenclip", "daemon", NULL,
    NULL /* terminate */
 };
@@ -62,17 +63,20 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class              instance    title           tags mask     allowkill   isfloating  isterminal  noswallow  monitor   scratch key */
-	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          0,          0,         -1,       0 },
 	{ "Weston Compositor",NULL,       NULL,           0,            1,          1,          0,          0,         -1,       0 },
 	{ "neovim",           NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
 	{ "librewolf",        NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
 	{ "qutebrowser",      NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
 	{ "discord",          NULL,       NULL,           1 << 4,       1,          0,          0,          0,         -1,       0 },
-	{ "Spotify",          NULL,       NULL,           1 << 5,       0,          0,          0,          0,         -1,       0 },
-	{ "steam",            NULL,       NULL,           1 << 6,       1,          1,          0,          0,         -1,       0 },
+	{ "Spotify",          NULL,       NULL,           1 << 5,       1,          0,          0,          0,         -1,       0 },
+	{ "Chromium",         NULL,       NULL,           1 << 6,       1,          0,          0,          0,         -1,       0 },
+	{ "steam",            NULL,       NULL,           1 << 7,       1,          1,          0,          0,         -1,       0 },
+	{ "steam",            NULL,       NULL,           1 << 7,       1,          1,          0,          0,         -1,       0 },
+	{ "mpv",              NULL,       NULL,           1 << 8,       1,          0,          0,          0,         -1,       0 },
 	{ "Nemo",             NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
 	{ "St",               NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
 	{ NULL,               NULL,       "spterm",       0,            1,          1,          1,          0,         -1,       't' },
+	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          1,          0,         -1,       'w' },
 	{ NULL,               NULL,       "random",       0,            1,          1,          0,          1,         -1,       'o' },
 	{ NULL,               NULL,       "random1",      0,            1,          1,          0,          1,         -1,       'i' },
 	{ NULL,               NULL,       "spmix",        0,            1,          1,          0,          1,         -1,       'a' },
@@ -130,6 +134,7 @@ static const char *playerctlcmd[3][3] = {
 
 /* scratchpads */
 static const char *sptermcmd[] = {"t", "st", "-t", "spterm","-g", "120x24", NULL};
+static const char *spwpcmd[]   = {"w", "set-wallpaper", NULL};
 static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "120x24", "-e", "btop", NULL};
 static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "120x24", "-e", "pulsemixer", NULL};
 static const char *spcalcmd[]  = {"m", "st", "-t", "spcal", "-g", "120x24", "-e", "calcurse", NULL};
@@ -139,9 +144,9 @@ static const char *sprandom1cmd[] = { "i",  NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_w,                     spawn,          SHCMD("set-wallpaper") },
 	{ MODKEY,                       XK_z,                     spawn,          SHCMD("launcher") },
 	{ MODKEY,                       XK_x,                     spawn,          SHCMD("powermenu")},
+	{ MODKEY|ShiftMask,             XK_w,                     spawn,          SHCMD("waldl")},
 	{ MODKEY|ShiftMask,             XK_e,                     spawn,          SHCMD("anime")},
 	{ MODKEY|ShiftMask,             XK_t,                     spawn,          SHCMD("theme_picker.sh")},
 	{ MODKEY,                       XK_v,                     spawn,          SHCMD("greenclip print | grep . | dmenu -m 0 | xargs -r -d'\n' -I '{}' greenclip print '{}'")},
@@ -203,6 +208,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_Escape,  togglescratch,  {.v = sptermcmd } },
 	{ MODKEY,                       XK_a,      togglescratch,  {.v = spmixcmd } },
 	{ MODKEY,                       XK_p,      togglescratch,  {.v = sptopcmd } },
+	{ MODKEY,                       XK_w,      togglescratch,  {.v = spwpcmd } },
 	{ MODKEY,                       XK_c,      togglescratch,  {.v = spcalcmd } },
 
 	{ MODKEY,                       XK_o,      togglescratch,  {.v = sprandomcmd } },
