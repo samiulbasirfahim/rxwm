@@ -1,8 +1,8 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx  = 2;        /* border pixel of windows */
-static const unsigned int gappx     = 6;        /* gaps between windows */
+static const unsigned int borderpx  = 3;        /* border pixel of windows */
+static const unsigned int gappx     = 8;        /* gaps between windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
 static const int previewbar         = 0;        /* show the bar in the preview window */
@@ -13,15 +13,15 @@ static const unsigned int systrayspacing = 8;   /* systray spacing */
 static const unsigned int systrayiconsize = 16; /* systray icon size in px */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 static const int showsystray        = 1;        /* 0 means no systray */
-static const int showbar            = 1;        /* 0 means no bar */
 static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
-static const int topbar             = 0;        /* 0 means bottom bar */ 
 static const int allowkill          = 1;        /* allow killing clients by default? */
 static const char *fonts[]          = { 
-    "IosevkaTermSlab Nerd Font:size=13:style=semibold",
+    "IosevkaTermSlab Nerd Font:pixelsize=17:style=semibold",
 };
+static const int showbar            = 1;        /* 0 means no bar */
+static const int topbar             = 0;        /* 0 means bottom bar */ 
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
-static const int vertpadbar         = 14;        /* vertical padding for statusbar */
+static const int vertpadbar         = 6;        /* vertical padding for statusbar */
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
@@ -63,6 +63,7 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class              instance    title           tags mask     allowkill   isfloating  isterminal  noswallow  monitor   scratch key */
+	// { NULL,               NULL,       NULL,           0,            1,          0,          0,          1,         0,        0  }, /* xev */
 	{ "Weston Compositor",NULL,       NULL,           0,            1,          1,          0,          0,         -1,       0 },
 	{ "neovim",           NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
 	{ "librewolf",        NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
@@ -75,13 +76,13 @@ static const Rule rules[] = {
 	{ "mpv",              NULL,       NULL,           1 << 8,       1,          0,          0,          0,         -1,       0 },
 	{ "Nemo",             NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
 	{ "St",               NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
-	{ NULL,               NULL,       "spterm",       0,            1,          1,          1,          0,         -1,       't' },
-	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          1,          0,         -1,       'w' },
-	{ NULL,               NULL,       "random",       0,            1,          1,          0,          1,         -1,       'o' },
-	{ NULL,               NULL,       "random1",      0,            1,          1,          0,          1,         -1,       'i' },
-	{ NULL,               NULL,       "spmix",        0,            1,          1,          0,          1,         -1,       'a' },
-	{ NULL,               NULL,       "spcal",        0,            1,          1,          0,          1,         -1,       'm' },
-	{ NULL,               NULL,       "sptop",        0,            1,          1,          0,          1,         -1,       'p' },
+	{ NULL,               NULL,       "spterm",       0,            1,          1,          1,          0,         0,       't' },
+	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          1,          0,         0,       'w' },
+	{ NULL,               NULL,       "random",       0,            1,          1,          0,          1,         0,       'o' },
+	{ NULL,               NULL,       "random1",      0,            1,          1,          0,          1,         0,       'i' },
+	{ NULL,               NULL,       "spmix",        0,            1,          1,          0,          1,         0,       'a' },
+	{ NULL,               NULL,       "spcal",        0,            1,          1,          0,          1,         0,       'm' },
+	{ NULL,               NULL,       "sptop",        0,            1,          1,          0,          1,         0,       'p' },
 	{ NULL,               NULL,       "Event Tester", 0,            1,          0,          0,          1,         -1,        0  }, /* xev */
 };
 
@@ -150,14 +151,15 @@ static const char *sprandom1cmd[] = { "i",  NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_z,                     spawn,          SHCMD("launcher") },
-	{ MODKEY,                       XK_x,                     spawn,          SHCMD("powermenu")},
-	{ MODKEY|ShiftMask,             XK_w,                     spawn,          SHCMD("waldl")},
-	{ MODKEY|ShiftMask,             XK_e,                     spawn,          SHCMD("anime")},
-	{ MODKEY|ShiftMask,             XK_t,                     spawn,          SHCMD("theme_picker.sh")},
-	{ MODKEY,                       XK_v,                     spawn,          SHCMD("greenclip print | grep . | dmenu -m 0 | xargs -r -d'\n' -I '{}' greenclip print '{}'")},
-	{0,                             XK_Print,       		  spawn,          SHCMD("screenshot_dmenu")},
-	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("screenshot_dmenu_c")},
+	{ MODKEY,                       XK_z,                     spawn,          SHCMD("bash ~/.local/bin/launcher") },
+	{ MODKEY,                       XK_x,                     spawn,          SHCMD("bash ~/.local/bin/powermenu")},
+	{ MODKEY|ShiftMask,             XK_w,                     spawn,          SHCMD("bash ~/.local/bin/waldl")},
+	{ MODKEY|ShiftMask,             XK_d,                     spawn,          SHCMD("bash ~/.local/bin/display_chose")},
+	{ MODKEY|ShiftMask,             XK_e,                     spawn,          SHCMD("bash ~/.local/bin/anime")},
+	{ MODKEY|ShiftMask,             XK_t,                     spawn,          SHCMD("bash ~/.local/bin/theme_picker.sh")},
+	{ MODKEY,                       XK_v,                     spawn,          SHCMD("~/.local/bin/greenclip print | grep . | dmenu -m 0 | xargs -r -d'\n' -I '{}' greenclip print '{}'")},
+	{0,                             XK_Print,       		  spawn,          SHCMD("bash ~/.local/bin/screenshot_dmenu")},
+	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("bash ~/.local/bin/screenshot_dmenu_c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_n,                     spawn,          SHCMD("st -c neovim -e nvim")},
 	{ShiftMask,                     XK_F12,                   spawn,          {.v = volumecmd[0]} },
@@ -232,7 +234,7 @@ static const Key keys[] = {
 static const Button buttons[] = {
 	/* click                event mask      button          function        argument */
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
-	{ ClkLtSymbol,          0,              Button3,        setlayout,      {2} },
+	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkWinTitle,          0,              Button3,        zoom,           {0} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
