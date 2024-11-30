@@ -15,13 +15,14 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
 static const int allowkill          = 1;        /* allow killing clients by default? */
-static const char *fonts[]          = { 
-    "IosevkaTermSlab Nerd Font:pixelsize=17:style=semibold",
-};
+static const char *fonts[]          = { "IosevkaTermSlab Nerd Font:style=semiBold:size=12" };
 static const int showbar            = 1;        /* 0 means no bar */
-static const int topbar             = 0;        /* 0 means bottom bar */ 
+static const int empty_tags         = 1;        /* 0 means no empty tags */
+static const int topbar             = 1;        /* 0 means bottom bar */ 
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
 static const int vertpadbar         = 6;        /* vertical padding for statusbar */
+
+
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
@@ -35,7 +36,7 @@ static char *colors[][3] = {
         [SchemeNorm]      = { normfgcolor, normbgcolor, normbordercolor },
         [SchemeSel]       = { normfgcolor,  normbgcolor,  selbordercolor  },
         [SchemeStatus]    = { normfgcolor, normbgcolor,  normbordercolor  }, // Statusbar right {text,background,not used but cannot be empty}
-        [SchemeTagsSel]   = { selfgcolor, selbgcolor,  selbordercolor  }, // Tagbar left selected {text,background,not used but cannot be empty}
+        [SchemeTagsSel]   = { selfgcolor, selbgcolor,   selbordercolor }, // Tagbar left selected {text,background,not used but cannot be empty}
         [SchemeTagsNorm]  = { normfgcolor, normbgcolor, normbordercolor  }, // Tagbar left unselected {text,background,not used but cannot be empty}
         [SchemeInfoSel]   = { selfgcolor, selbgcolor,  selbordercolor  }, // infobar middle  selected {text,background,not used but cannot be empty}
         [SchemeInfoNorm]  = { normfgcolor, normbgcolor,  normbordercolor  }, // infobar middle  unselected {text,background,not used but cannot be empty}
@@ -56,6 +57,11 @@ static const char *const autostart[] = {
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
+static const unsigned int ulinepad	= 0;	/* horizontal padding between the underline and tag */
+static const unsigned int ulinestroke	= 3;	/* thickness / height of the underline */
+static const unsigned int ulinevoffset	= 0;	/* how far above the bottom of the bar the line should appear */
+static const int ulineall 		= 0;	/* 1 to show underline on all tags, 0 for just the active ones */
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -94,9 +100,9 @@ static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen win
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },    /* first entry is default */
-	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
+	{ "󰕰",      tile },    /* first entry is default */
+	{ "",      NULL },    /* no layout function means floating behavior */
+	{ "",      monocle },
 	{ "|M|",      centeredmaster },
 	{ ">M>",      centeredfloatingmaster },
 	{ "HHH",      grid },
