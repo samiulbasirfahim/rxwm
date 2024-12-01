@@ -18,10 +18,12 @@ static const int allowkill          = 1;        /* allow killing clients by defa
 static const char *fonts[]          = { "Terminess Nerd Font:style=semibold:size=13" };
 static const int showbar            = 1;        /* 0 means no bar */
 static const int empty_tags         = 0;        /* 0 means no empty tags */
-static const int topbar             = 0;        /* 0 means bottom bar */ 
+static const int topbar             = 1;        /* 0 means bottom bar */ 
 static const int user_bh            = 4;        /* 2 is the default spacing around the bar's font */
 static const int horizpadbar        = 0;       /* horizontal padding for statusbar */
-static const int vertpadbar         = 14;       /* vertical padding for statusbar */
+static const int vertpadbar         = 12;       /* vertical padding for statusbar */
+static const int vertpad            = 12;       /* vertical padding of bar */
+static const int sidepad            = 12;       /* horizontal padding of bar */
 
 
 static char normfgcolor[]           = "#CDD6F4";

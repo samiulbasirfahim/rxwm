@@ -345,6 +345,8 @@ static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh;               /* bar height */
 static int lrpad;            /* sum of left and right padding for text */
+static int vp;               /* vertical padding for bar */
+static int sp;               /* side padding for bar */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static unsigned int numlockmask = 0;
 static void (*handler[LASTEvent]) (XEvent *) = {
@@ -1054,7 +1056,8 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 	drw_setscheme(drw, scheme[LENGTH(colors)]);
 	drw->scheme[ColFg] = scheme[SchemeNorm][ColFg];
 	drw->scheme[ColBg] = scheme[SchemeNorm][ColBg];
-	drw_rect(drw, x, 0, w, bh, 1, 1);
+	/* drw_rect(drw, x, 0, w, bh, 1, 1); */
+	drw_rect(drw, x - 2 * sp, 0, w, bh, 1, 1);
 	x += lrpad / 2;
 
 	/* process status text */
@@ -1065,7 +1068,7 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 
 			text[i] = '\0';
 			w = TEXTW(text) - lrpad;
-            drw_text(drw, x, vertpadbar / 2, w, bh - vertpadbar, 0, text, 0);
+            drw_text(drw, x - 2 * sp, vertpadbar / 2, w, bh - vertpadbar, 0, text, 0);
 
 			x += w;
 
@@ -1095,7 +1098,8 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 					while (text[++i] != ',');
 					int rh = atoi(text + ++i);
 
-                    drw_rect(drw, rx + x, ry + vertpadbar / 2, rw,MIN(rh, bh - vertpadbar), 1, 0);
+                    /* drw_rect(drw, rx + x, ry + vertpadbar / 2, rw,MIN(rh, bh - vertpadbar), 1, 0); */
+                    drw_rect(drw, rx + x - 2 * sp, ry + vertpadbar / 2, rw, MIN(rh, bh - vertpadbar), 1, 0);
 				} else if (text[i] == 'f') {
 					x += atoi(text + ++i);
 				}
@@ -1109,7 +1113,9 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 
 	if (!isCode) {
 		w = TEXTW(text) - lrpad;
-		drw_text(drw, x, 0, w, bh, 0, text, 0);
+		/* drw_text(drw, x, 0, w, bh, 0, text, 0); */
+
+		drw_text(drw, x - 2 * sp, 0, w, bh, 0, text, 0);
 	}
 
 	drw_setscheme(drw, scheme[SchemeStatus]);
@@ -1178,6 +1184,7 @@ drawbar(Monitor *m)
 		masterclientontag[i] = tagdisp;
 		tagw[i] = w = TEXTW(masterclientontag[i]);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeTagsSel : SchemeTagsNorm]);
+        // draw tags
 		drw_text(drw, x, 0, w, bh, lrpad / 2, masterclientontag[i], urg & 1 << i);
 
 		if (ulineall || m->tagset[m->seltags] & 1 << i) /* if there are conflicts, just move these lines directly underneath both 'drw_setscheme' and 'drw_text' :) */
@@ -1193,19 +1200,21 @@ drawbar(Monitor *m)
 	}
 	w = TEXTW(m->ltsymbol);
 	drw_setscheme(drw, scheme[SchemeTagsNorm]);
-	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
+	x = drw_text(drw, x, 0, w + 2 * sp, bh, lrpad / 2, m->ltsymbol, 0);
 
 	if ((w = m->ww - tw - stw - x) > bh) {
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
-            drw_text(drw, x, vertpadbar / 2, w , bh - vertpadbar, lrpad / 2, m->sel->name, 0);
+            /* drw_text(drw, x, vertpadbar / 2, w - 3 * sp, bh - vertpadbar, lrpad / 2, m->sel->name, 0); */
+			drw_text(drw, x - 2 * sp, vertpadbar / 2, w, bh - vertpadbar, lrpad / 2, m->sel->name, 0);
 			if (m->sel->isfloating)
 				// drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
-        drw_rect(drw, x + boxs, boxs + vertpadbar / 2, boxw, boxw,
+                drw_rect(drw, x + boxs, boxs + vertpadbar / 2, boxw, boxw,
                  m->sel->isfixed, 0);
 		} else {
 			drw_setscheme(drw, scheme[SchemeInfoNorm]);
-			drw_rect(drw, x, 0, w, bh, 1, 1);
+			/* drw_rect(drw, x, 0, w - 2 * sp, bh, 1, 1); */
+			drw_rect(drw, x - sp, 0, w - sp, bh, 1, 1);
 		}
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww - stw, bh);
@@ -1698,7 +1707,9 @@ monocle(Monitor *m)
 	if (n > 0) /* override layout symbol */
 		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
 	for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
-		resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
+		/* resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0); */
+        resize(c, m->wx + gappx, m->wy + gappx, m->ww - 2 * c->bw - gappx * 2, m->wh - 2 * c->bw - gappx * 2, 0);
+
 }
 
 void
@@ -1706,7 +1717,7 @@ motionnotify(XEvent *e)
 {
 	static Monitor *mon = NULL;
 	Monitor *m;
-  Client *c;
+    Client *c;
 	XMotionEvent *ev = &e->xmotion;
 	unsigned int i, x;
 
@@ -1951,9 +1962,9 @@ resize(Client *c, int x, int y, int w, int h, int interact)
 void
 resizebarwin(Monitor *m) {
 	unsigned int w = m->ww;
-	if (showsystray && m == systraytomon(m) && !systrayonleft)
+	if (showsystray && m == systraytomon(m))
 		w -= getsystraywidth();
-	XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, w, bh);
+	XMoveResizeWindow(dpy, m->barwin, m->wx + sp, m->by + vp, w -  2 * sp, bh);
 }
 
 void
@@ -1966,7 +1977,7 @@ resizeclient(Client *c, int x, int y, int w, int h)
 	c->oldw = c->w; c->w = wc.width = w;
 	c->oldh = c->h; c->h = wc.height = h;
 	wc.border_width = c->bw;
-  if (((nexttiled(c->mon->clients) == c && !nexttiled(c->next) && !border_when_only) ||
+    if (((nexttiled(c->mon->clients) == c && !nexttiled(c->next) && !border_when_only) ||
        &monocle == c->mon->lt[c->mon->sellt]->arrange) &&
       !c->isfullscreen && !c->isfloating &&
       NULL != c->mon->lt[c->mon->sellt]->arrange) {
@@ -2449,6 +2460,9 @@ setup(void)
 	lrpad = drw->fonts->h + horizpadbar;
 	bh = drw->fonts->h + vertpadbar + user_bh;
 	updategeom();
+	sp = sidepad;
+	vp = (topbar == 1) ? vertpad : - vertpad;
+
 	/* init atoms */
 	utf8string = XInternAtom(dpy, "UTF8_STRING", False);
 	wmatom[WMProtocols] = XInternAtom(dpy, "WM_PROTOCOLS", False);
@@ -2487,6 +2501,7 @@ setup(void)
 	/* init bars */
 	updatebars();
 	updatestatus();
+	updatebarpos(selmon);
 	/* supporting window for NetWMCheck */
 	wmcheckwin = XCreateSimpleWindow(dpy, root, 0, 0, 1, 1, 0, 0, 0);
 	XChangeProperty(dpy, wmcheckwin, netatom[NetWMCheck], XA_WINDOW, 32,
@@ -2675,6 +2690,7 @@ togglebar(const Arg *arg)
 		}
 		XConfigureWindow(dpy, systray->win, CWY, &wc);
 	}
+    updatesystray();
 	arrange(selmon);
 }
 
@@ -2983,11 +2999,11 @@ updatebars(void)
 	for (m = mons; m; m = m->next) {
 		if (!m->tagwin) {
       if(topbar) {
-        m->tagwin = XCreateWindow(dpy, root, m->wx, m->by + bh, m->mw / scalepreview,
+        m->tagwin = XCreateWindow(dpy, root, m->wx + sp, m->by + bh + vp, m->mw / scalepreview,
           m->mh / scalepreview, 0, DefaultDepth(dpy, screen), CopyFromParent,
           DefaultVisual(dpy, screen), CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
       } else {
-        m->tagwin = XCreateWindow(dpy, root, m->wx, m->by - (m->mh / scalepreview), m->mw / scalepreview,
+        m->tagwin = XCreateWindow(dpy, root, m->wx + sp, m->by - (m->mh / scalepreview) + vp, m->mw / scalepreview,
           m->mh / scalepreview, 0, DefaultDepth(dpy, screen), CopyFromParent,
           DefaultVisual(dpy, screen), CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
       }
@@ -2999,9 +3015,7 @@ updatebars(void)
 		w = m->ww;
 		if (showsystray && m == systraytomon(m))
 			w -= getsystraywidth();
-		m->barwin = XCreateWindow(dpy, root, m->wx, m->by, w, bh, 0, DefaultDepth(dpy, screen),
-				CopyFromParent, DefaultVisual(dpy, screen),
-				CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
+		m->barwin = XCreateWindow(dpy, root, m->wx + sp, m->by + vp, w - 2 * sp, bh, 0, DefaultDepth(dpy, screen), CopyFromParent, DefaultVisual(dpy, screen), CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
 		XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
 		if (showsystray && m == systraytomon(m))
 			XMapRaised(dpy, systray->win);
@@ -3016,11 +3030,11 @@ updatebarpos(Monitor *m)
 	m->wy = m->my;
 	m->wh = m->mh;
 	if (m->showbar) {
-		m->wh -= bh;
-		m->by = m->topbar ? m->wy : m->wy + m->wh;
-		m->wy = m->topbar ? m->wy + bh : m->wy;
+		m->wh = m->wh - vertpad - bh;
+		m->by = m->topbar ? m->wy : m->wy + m->wh + vertpad;
+		m->wy = m->topbar ? m->wy + bh + vp : m->wy;
 	} else
-		m->by = -bh;
+		m->by = -bh - vp;
 }
 
 void
@@ -3234,7 +3248,9 @@ updatesystray(void)
 	XWindowChanges wc;
 	Client *i;
 	Monitor *m = systraytomon(NULL);
-	unsigned int x = m->mx + m->mw;
+
+    unsigned int x = m->mx + m->mw - sp;
+    unsigned int y = m->by + vp;
 	unsigned int sw = TEXTW(stext) - lrpad + systrayspacing;
 	unsigned int w = 1;
 
@@ -3285,8 +3301,9 @@ updatesystray(void)
 	}
 	w = w ? w + systrayspacing : 1;
 	x -= w;
+
 	XMoveResizeWindow(dpy, systray->win, x, m->by, w, bh);
-	wc.x = x; wc.y = m->by; wc.width = w; wc.height = bh;
+    wc.x = x; wc.y = y; wc.width = w; wc.height = bh;
 	wc.stack_mode = Above; wc.sibling = m->barwin;
 	XConfigureWindow(dpy, systray->win, CWX|CWY|CWWidth|CWHeight|CWSibling|CWStackMode, &wc);
 	XMapWindow(dpy, systray->win);
