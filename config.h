@@ -3,7 +3,7 @@
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int gappx     = 12;        /* gaps between windows */
-static const unsigned int snap      = 32;       /* snap pixel */
+static const unsigned int snap      = 5;       /* snap pixel */
 static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
 static const int previewbar         = 0;        /* show the bar in the preview window */
 static const int swallowfloating    = 1;        /* 1 means swallow floating windows by default */
@@ -15,34 +15,37 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
 static const int allowkill          = 1;        /* allow killing clients by default? */
-static const char *fonts[]          = { "Terminess Nerd Font:style=semibold:size=14" };
+static const char *fonts[]          = { "Terminess Nerd Font:style=semibold:size=13" };
 static const int showbar            = 1;        /* 0 means no bar */
 static const int empty_tags         = 0;        /* 0 means no empty tags */
 static const int topbar             = 0;        /* 0 means bottom bar */ 
 static const int user_bh            = 4;        /* 2 is the default spacing around the bar's font */
-static const int horizpadbar        = 2;       /* horizontal padding for statusbar */
+static const int horizpadbar        = 0;       /* horizontal padding for statusbar */
 static const int vertpadbar         = 14;       /* vertical padding for statusbar */
 
 
+static char normfgcolor[]           = "#CDD6F4";
 static char normbgcolor[]           = "#222222";
-static char normbordercolor[]       = "#444444";
-static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
+static char selbgcolor[]            = "#181825";
+static char tagsfgcolor[]           = "#CDD6F4";
+static char tagsbgcolor[]           = "#313244";
+static char normbordercolor[]       = "#444444";
 static char selbordercolor[]        = "#005577";
-static char selbgcolor[]            = "#005577";
 static char normscrbordercolor[]    = "#FF0000";
 static char selscrbordercolor[]     = "#FF8800";
+
 static char *colors[][3] = {
         /*                    fg           bg           border   */
-        [SchemeNorm]      = { normfgcolor, normbgcolor, normbordercolor },
-        [SchemeSel]       = { selfgcolor, selbgcolor,   selbordercolor  },
-        [SchemeStatus]    = { normfgcolor, normbgcolor,  normbordercolor  }, // Statusbar right {text,background,not used but cannot be empty}
-        [SchemeTagsSel]   = { selfgcolor, normbgcolor,   selbordercolor }, // Tagbar left selected {text,background,not used but cannot be empty}
-        [SchemeTagsNorm]  = { normfgcolor, normbgcolor, normbordercolor  }, // Tagbar left unselected {text,background,not used but cannot be empty}
-        [SchemeInfoSel]   = { selfgcolor, selbgcolor,  selbordercolor  }, // infobar middle  selected {text,background,not used but cannot be empty}
-        [SchemeInfoNorm]  = { normfgcolor, normbgcolor,  normbordercolor  }, // infobar middle  unselected {text,background,not used but cannot be empty}
-      	[SchemeScratchSel]  = { selfgcolor, selbgcolor,   selscrbordercolor },
-        [SchemeScratchNorm] = { normfgcolor, normbgcolor,  normscrbordercolor },
+        [SchemeNorm]            = { normfgcolor,        normbgcolor,        normbordercolor },
+        [SchemeSel]             = { selfgcolor,         selbgcolor,         selbordercolor  },
+        [SchemeStatus]          = { normfgcolor,        normbgcolor,        normbordercolor  }, // Statusbar right {text,background,not used but cannot be empty}
+        [SchemeTagsSel]         = { tagsfgcolor,        tagsbgcolor,        selbordercolor }, // Tagbar left selected {text,background,not used but cannot be empty}
+        [SchemeTagsNorm]        = { normfgcolor,        normbgcolor,        normbordercolor  }, // Tagbar left unselected {text,background,not used but cannot be empty}
+        [SchemeInfoSel]         = { selfgcolor,         selbgcolor,         selbordercolor  }, // infobar middle  selected {text,background,not used but cannot be empty}
+        [SchemeInfoNorm]        = { normfgcolor,        normbgcolor,        normbordercolor  }, // infobar middle  unselected {text,background,not used but cannot be empty}
+      	[SchemeScratchSel]      = { selfgcolor,         selbgcolor,         selscrbordercolor },
+        [SchemeScratchNorm]     = { normfgcolor,        normbgcolor,        normscrbordercolor },
 };
 
 /* autostart applications */
@@ -64,8 +67,9 @@ static const unsigned int ulinestroke	= 4;	/* thickness / height of the underlin
 static const unsigned int ulinevoffset	= 0;	/* how far above the bottom of the bar the line should appear */
 static const int ulineall 		= 0;	/* 1 to show underline on all tags, 0 for just the active ones */
 
-static const char ptagf[] = "[%s %s]";	/* format of a tag label */
-static const char etagf[] = "[%s]";	/* format of an empty tag */
+static const char ptagf[] = "%s";	/* format of a tag label */
+/* static const char ptagf[] = "[%s %s]";	/* format of a tag label */
+static const char etagf[] = "%s";	/* format of an empty tag */
 static const int lcaselbl = 0;		/* 1 means make tag label lowercase */	
 
 static const Rule rules[] = {
@@ -179,6 +183,9 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_d,                     incnmaster,     {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_h,                     setmfact,       {.f = -0.05} },
 	{ MODKEY|ShiftMask,             XK_l,                     setmfact,       {.f = +0.05} },
+	{ MODKEY|ShiftMask,             XK_k,                     setcfact,       {.f = +0.25} },
+	{ MODKEY|ShiftMask,             XK_j,                     setcfact,       {.f = -0.25} },
+	/* { MODKEY|ShiftMask,             XK_o,                     setcfact,       {.f =  0.00} }, */
 	{ MODKEY,                       XK_h,                     shiftview,      { .i = -1 } },
 	{ MODKEY,                       XK_l,                     shiftview,      { .i = +1 } },
 	{ MODKEY|ShiftMask,             XK_Return,                zoom,           {0} },
