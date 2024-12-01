@@ -1037,15 +1037,20 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 		isCode = 0;
 	text = p;
 
-	w += 2; /* 1px padding on both sides */
-	ret = m->ww - w;
-	x = m->ww - w - getsystraywidth();
+    int stw = 0;
+
+	if(showsystray && m == systraytomon(m) && !systrayonleft)
+		stw = getsystraywidth();
+
+    w += horizpadbar + lrpad / 2; /* add padding */
+    ret = m->ww - w;
+	x = m->ww - w - stw;
 
 	drw_setscheme(drw, scheme[LENGTH(colors)]);
 	drw->scheme[ColFg] = scheme[SchemeNorm][ColFg];
 	drw->scheme[ColBg] = scheme[SchemeNorm][ColBg];
 	drw_rect(drw, x, 0, w, bh, 1, 1);
-	x++;
+	x += lrpad / 2;
 
 	/* process status text */
 	i = -1;
@@ -1055,8 +1060,7 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 
 			text[i] = '\0';
 			w = TEXTW(text) - lrpad;
-			// drw_text(drw, x, 0, w, bh, 0, text, 0);
-      drw_text(drw, x, vertpadbar / 2, w, bh - vertpadbar, 0, text, 0);
+            drw_text(drw, x, vertpadbar / 2, w, bh - vertpadbar, 0, text, 0);
 
 			x += w;
 
@@ -1086,9 +1090,7 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 					while (text[++i] != ',');
 					int rh = atoi(text + ++i);
 
-					// drw_rect(drw, rx + x, ry, rw, rh, 1, 0);
-          drw_rect(drw, rx + x, ry + vertpadbar / 2, rw,
-                   MIN(rh, bh - vertpadbar), 1, 0);
+                    drw_rect(drw, rx + x, ry + vertpadbar / 2, rw,MIN(rh, bh - vertpadbar), 1, 0);
 				} else if (text[i] == 'f') {
 					x += atoi(text + ++i);
 				}
@@ -1168,9 +1170,7 @@ drawbar(Monitor *m)
 	if ((w = m->ww - tw - stw - x) > bh) {
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
-			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0);
-      drw_text(drw, x, vertpadbar / 2, w , bh - vertpadbar, 0, m->sel->name,
-               0);
+            drw_text(drw, x, vertpadbar / 2, w , bh - vertpadbar, lrpad / 2, m->sel->name, 0);
 			if (m->sel->isfloating)
 				// drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
         drw_rect(drw, x + boxs, boxs + vertpadbar / 2, boxw, boxw,
@@ -2399,7 +2399,7 @@ setup(void)
 	if (!drw_fontset_create(drw, fonts, LENGTH(fonts)))
 		die("no fonts could be loaded.");
 	lrpad = drw->fonts->h + horizpadbar;
-	bh = drw->fonts->h + vertpadbar;
+	bh = drw->fonts->h + vertpadbar + user_bh;
 	updategeom();
 	/* init atoms */
 	utf8string = XInternAtom(dpy, "UTF8_STRING", False);
