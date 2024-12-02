@@ -81,6 +81,7 @@ static const Rule rules[] = {
 	 */
 	/* class              instance    title           tags mask     allowkill   isfloating  isterminal  noswallow  monitor   scratch key */
 	// { NULL,               NULL,       NULL,           0,            1,          0,          0,          1,         0,        0  }, /* xev */
+	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          0,          0,         -1,        0 },
 	{ "Weston Compositor",NULL,       NULL,           0,            1,          1,          0,          0,         -1,       0 },
 	{ "neovim",           NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
 	{ "librewolf",        NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
@@ -94,7 +95,6 @@ static const Rule rules[] = {
 	{ "Nemo",             NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
 	{ "St",               NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
 	{ NULL,               NULL,       "spterm",       0,            1,          1,          1,          0,         0,       't' },
-	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          1,          0,         0,       'w' },
 	{ NULL,               NULL,       "random",       0,            1,          1,          0,          1,         0,       'o' },
 	{ NULL,               NULL,       "random1",      0,            1,          1,          0,          1,         0,       'i' },
 	{ NULL,               NULL,       "spmix",        0,            1,          1,          0,          1,         0,       'a' },
@@ -151,7 +151,6 @@ static const char *playerctlcmd[3][3] = {
 
 /* scratchpads */
 static const char *sptermcmd[] = {"t", "st", "-t", "spterm","-g", "120x24", NULL};
-static const char *spwpcmd[]   = {"w", "set-wallpaper", NULL};
 static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "120x24", "-e", "btop", NULL};
 static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "120x24", "-e", "pulsemixer", NULL};
 static const char *spcalcmd[]  = {"m", "st", "-t", "spcal", "-g", "120x24", "-e", "calcurse", NULL};
@@ -164,6 +163,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_z,                     spawn,          SHCMD("bash ~/.local/bin/launcher") },
 	{ MODKEY,                       XK_x,                     spawn,          SHCMD("bash ~/.local/bin/powermenu")},
 	{ MODKEY|ShiftMask,             XK_w,                     spawn,          SHCMD("bash ~/.local/bin/waldl")},
+	{ MODKEY,                       XK_w,                     spawn,          SHCMD("bash ~/.local/bin/set-wallpaper")},
 	{ MODKEY|ShiftMask,             XK_d,                     spawn,          SHCMD("bash ~/.local/bin/display_chose")},
 	{ MODKEY|ShiftMask,             XK_e,                     spawn,          SHCMD("bash ~/.local/bin/anime")},
 	{ MODKEY|ShiftMask,             XK_t,                     spawn,          SHCMD("bash ~/.local/bin/theme_picker.sh")},
@@ -229,7 +229,6 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_Escape,  togglescratch,  {.v = sptermcmd } },
 	{ MODKEY,                       XK_a,      togglescratch,  {.v = spmixcmd } },
 	{ MODKEY,                       XK_p,      togglescratch,  {.v = sptopcmd } },
-	{ MODKEY,                       XK_w,      togglescratch,  {.v = spwpcmd } },
 	{ MODKEY,                       XK_c,      togglescratch,  {.v = spcalcmd } },
 
 	{ MODKEY,                       XK_o,      togglescratch,  {.v = sprandomcmd } },
