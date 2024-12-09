@@ -96,7 +96,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeStatus, SchemeTagsSel, SchemeTagsNorm, SchemeInfoSel, SchemeInfoNorm, SchemeScratchNorm, SchemeScratchSel }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeStatus, SchemeTagsSel, SchemeTagsNorm, SchemeInfoSel, SchemeInfoNorm, SchemeScratchNorm, SchemeScratchSel, SchemeUline }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetSystemTray, NetSystemTrayOP, NetSystemTrayOrientation, NetSystemTrayOrientationHorz,
        NetWMFullscreen, NetWMSticky, NetActiveWindow, NetWMWindowType,
@@ -1188,7 +1188,11 @@ drawbar(Monitor *m)
 		drw_text(drw, x, 0, w, bh, lrpad / 2, masterclientontag[i], urg & 1 << i);
 
 		if (ulineall || m->tagset[m->seltags] & 1 << i) /* if there are conflicts, just move these lines directly underneath both 'drw_setscheme' and 'drw_text' :) */
+        {
+
+		    drw_setscheme(drw, scheme[SchemeUline]);
 			drw_rect(drw, x + ulinepad, bh - ulinestroke - ulinevoffset, w - (ulinepad * 2), ulinestroke, 1, 0);
+        }
 
         if (empty_tags) {
             if (occ & 1 << i)
@@ -1199,7 +1203,7 @@ drawbar(Monitor *m)
 		x += w;
 	}
 	w = TEXTW(m->ltsymbol);
-	drw_setscheme(drw, scheme[SchemeTagsNorm]);
+	drw_setscheme(drw, scheme[SchemeUline]);
 	x = drw_text(drw, x, 0, w + 2 * sp, bh, lrpad / 2, m->ltsymbol, 0);
 
 	if ((w = m->ww - tw - stw - x) > bh) {
@@ -1543,11 +1547,13 @@ loadxrdb()
       xrdb = XrmGetStringDatabase(resm);
 
       if (xrdb != NULL) {
+
           XRDB_LOAD_COLOR("dwm.color0", normbgcolor);
           XRDB_LOAD_COLOR("dwm.color4", normfgcolor);
           XRDB_LOAD_COLOR("dwm.color4", selfgcolor);
           XRDB_LOAD_COLOR("dwm.color8", selbgcolor);
-          XRDB_LOAD_COLOR("dwm.color4", tagsfgcolor);
+          XRDB_LOAD_COLOR("dwm.color0", tagsfgcolor);
+          XRDB_LOAD_COLOR("dwm.color4", ulinecolor);
           XRDB_LOAD_COLOR("dwm.color8", tagsbgcolor);
           XRDB_LOAD_COLOR("dwm.color0", normbordercolor);
           XRDB_LOAD_COLOR("dwm.color4", selbordercolor);
