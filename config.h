@@ -15,15 +15,15 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
 static const int allowkill          = 1;        /* allow killing clients by default? */
-static const char *fonts[]          = { "Terminess Nerd Font:size=14:style=semibold" };
+static const char *fonts[]          = {"Terminess Nerd Font:size=14:style=semibold"};
 static const int showbar            = 1;        /* 0 means no bar */
 static const int empty_tags         = 0;        /* 0 means no empty tags */
-static const int topbar             = 0;        /* 0 means bottom bar */ 
-static const int user_bh            = 4;        /* 2 is the default spacing around the bar's font */
+static const int topbar             = 1;        /* 0 means bottom bar */ 
+static const int user_bh            = 2;        /* 2 is the default spacing around the bar's font */
 static const int horizpadbar        = 0;       /* horizontal padding for statusbar */
-static const int vertpadbar         = 10;       /* vertical padding for statusbar */
-static const int vertpad            = 12;       /* vertical padding of bar */
-static const int sidepad            = 12;       /* horizontal padding of bar */
+static const int vertpadbar         = 12;       /* vertical padding for statusbar */
+static const int vertpad            = 10;       /* vertical padding of bar */
+static const int sidepad            = 10;       /* horizontal padding of bar */
 // colors
 static char normfgcolor[]           = "#CDD6F4";
 static char normbgcolor[]           = "#222222";
