@@ -2,7 +2,7 @@
 
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
-static const unsigned int gappx     = 22;        /* gaps between windows */
+static const unsigned int gappx     = 18;        /* gaps between windows */
 static const unsigned int snap      = 5;       /* snap pixel */
 static const int border_when_only   = 1;        /* 0 means no border for single tiled window */
 static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
