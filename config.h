@@ -2,9 +2,9 @@
 
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
-static const unsigned int gappx     = 18;        /* gaps between windows */
+static const unsigned int gappx     = 14;        /* gaps between windows */
 static const unsigned int snap      = 5;       /* snap pixel */
-static const int border_when_only   = 1;        /* 0 means no border for single tiled window */
+static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
 static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
 static const int previewbar         = 0;        /* show the bar in the preview window */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
@@ -16,18 +16,18 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int allowkill          = 1;        /* allow killing clients by default? */
 static const char *fonts[]          = {
-    "Iosevka:size=12:style=italic",
+    "VictorMono:size=13:style=italic",
     "Symbols Nerd Font:size=14",
 };
 static const int showbar            = 1;        /* 0 means no bar */
+static const int full_title_width   = 0;        /* 1 means title will took full width of bar */
 static const int empty_tags         = 0;        /* 0 means no empty tags */
 static const int topbar             = 1;        /* 0 means bottom bar */ 
-static const int user_bh            = 2;        /* 2 is the default spacing around the bar's font */
-static const int horizpadbar        = 0;       /* horizontal padding for statusbar */
-static const int vertpadbar         = 12;       /* vertical padding for statusbar */
-static const int vertpad            = 10;       /* vertical padding of bar */
-static const int sidepad            = 16;       /* horizontal padding of bar */
-// colors
+static const int user_bh            = 3;        /* 2 is the default spacing around the bar's font */
+static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
+static const int vertpadbar         = 9;        /* vertical padding for statusbar */
+static const int vertpad            = 0;        /* vertical padding of bar */
+static const int sidepad            = 0;       /* horizontal padding of bar */
 static char normfgcolor[]           = "#CDD6F4";
 static char normbgcolor[]           = "#222222";
 static char selfgcolor[]            = "#eeeeee";
@@ -43,7 +43,7 @@ static char selscrbordercolor[]     = "#FF8800";
 static char *colors[][3] = {
         /*                          fg                  bg                  border   */
         [SchemeNorm]            = { normfgcolor,        normbgcolor,        normbordercolor },
-        [SchemeSel]             = { selfgcolor,         selbgcolor,         selbordercolor  },
+        [SchemeSel]             = { normbgcolor,        selbgcolor,         selbordercolor  },
         [SchemeStatus]          = { normfgcolor,        normbgcolor,        normbordercolor  }, // Statusbar right {text,background,not used but cannot be empty}
         [SchemeTagsSel]         = { tagsfgcolor,        tagsbgcolor,        selbordercolor }, // Tagbar left selected {text,background,not used but cannot be empty}
         [SchemeTagsNorm]        = { tagsbgcolor,        normbgcolor,        normbordercolor  }, // Tagbar left unselected {text,background,not used but cannot be empty}
@@ -85,7 +85,7 @@ static const Rule rules[] = {
 	/* class              instance    title           tags mask     allowkill   isfloating  isterminal  noswallow  monitor   scratch key */
 	// { NULL,               NULL,       NULL,           0,            1,          0,          0,          1,         0,        0  }, /* xev */
 	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          0,          0,         -1,        0 },
-	{ "Weston Compositor",NULL,       NULL,           0,            1,          1,          0,          0,         -1,       0 },
+	{ "Weston Compositor",NULL,       NULL,           1 << 0,       1,          1,          0,          0,         -1,       0 },
 	{ "neovim",           NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
 	{ "librewolf",        NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
 	{ "qutebrowser",      NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
@@ -138,23 +138,10 @@ static const Layout layouts[] = {
 static const char *termcmd[]  = { "st", NULL };
 static const char *layoutmenu_cmd = "~/.local/bin/layoutmenu.sh";
 
-static const char *volumecmd[3][5] = {
-	{ "wpctl", "set-volume", "@DEFAULT_SINK@", "0.05+", NULL },
-	{ "wpctl", "set-volume", "@DEFAULT_SINK@", "0.05-", NULL },
-	{ "wpctl", "set-mute", "@DEFAULT_SINK@", "toggle", NULL },
-};
-
-static const char *playerctlcmd[3][3] = {
-	{ "playerctl", "play-pause", NULL },
-	{ "playerctl", "next", NULL },
-	{ "playerctl", "previous", NULL },
-};
-
-
 /* scratchpads */
-static const char *sptermcmd[] = {"t", "st-smf", "-t", "spterm","-g", "120x24", NULL};
-static const char *sptopcmd[]  = {"p", "st-smf", "-t", "sptop", "-g", "120x24", "-e", "btop", NULL};
-static const char *spmixcmd[]  = {"a", "st-smf", "-t", "spmix", "-g", "120x24", "-e", "pulsemixer", NULL};
+static const char *sptermcmd[] = {"t", "st", "-t", "spterm","-g", "120x24", NULL};
+static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "120x24", "-e", "btop", NULL};
+static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "120x24", "-e", "pulsemixer", NULL};
 static const char *sprandomcmd[] = { "o",  NULL };
 static const char *sprandom1cmd[] = { "i",  NULL };
 
@@ -165,7 +152,6 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_x,                     spawn,          SHCMD("bash ~/.local/bin/powermenu")},
 	{ MODKEY|ShiftMask,             XK_w,                     spawn,          SHCMD("bash ~/.local/bin/waldl")},
 	{ MODKEY,                       XK_w,                     spawn,          SHCMD("bash ~/.local/bin/set-wallpaper")},
-    { MODKEY,                       XK_backslash,              spawn,          SHCMD("notify-send 'Anisha' 'I love you'")},
 	{ MODKEY|ShiftMask,             XK_d,                     spawn,          SHCMD("bash ~/.local/bin/display_chose")},
 	{ MODKEY|ShiftMask,             XK_e,                     spawn,          SHCMD("bash ~/.local/bin/anime")},
 	{ MODKEY|ShiftMask,             XK_t,                     spawn,          SHCMD("bash ~/.local/bin/theme_picker.sh")},
@@ -174,12 +160,12 @@ static const Key keys[] = {
 	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("bash ~/.local/bin/screenshot_dmenu_c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_n,                     spawn,          SHCMD("st -c neovim -e nvim")},
-	{ShiftMask,                     XK_F12,                   spawn,          {.v = volumecmd[0]} },
-	{ShiftMask,                     XK_F11,                   spawn,          {.v = volumecmd[1]} },
- 	{ShiftMask,                     XK_F10,                   spawn,          {.v = volumecmd[2]} },
-	{ShiftMask,                     XK_F8,                    spawn,          {.v = playerctlcmd[0]} },
- 	{ShiftMask,                     XK_F9,                    spawn,          {.v = playerctlcmd[1]} },
- 	{ShiftMask,                     XK_F7,                    spawn,          {.v = playerctlcmd[2]} },
+	{ShiftMask,                     XK_F12,                   spawn,          SHCMD("wpctl  set-volume @DEFAULT_SINK@ 0.05+") },
+	{ShiftMask,                     XK_F11,                   spawn,          SHCMD("wpctl  set-volume @DEFAULT_SINK@ 0.05-") },
+ 	{ShiftMask,                     XK_F10,                   spawn,          SHCMD("wpctl  set-mute @DEFAULT_SINK@ toggle") },
+	{ShiftMask,                     XK_F8,                    spawn,          SHCMD("playerctl play-pause")},
+ 	{ShiftMask,                     XK_F9,                    spawn,          SHCMD("playerctl next")},
+ 	{ShiftMask,                     XK_F7,                    spawn,          SHCMD("playerctl previous")},
 	{ MODKEY,                       XK_b,                     togglebar,      {0} },
 	{ MODKEY,                       XK_j,                     focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,                     focusstack,     {.i = -1 } },

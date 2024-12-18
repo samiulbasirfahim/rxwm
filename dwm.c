@@ -1210,7 +1210,7 @@ drawbar(Monitor *m)
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
             /* drw_text(drw, x, vertpadbar / 2, w - 3 * sp, bh - vertpadbar, lrpad / 2, m->sel->name, 0); */
-			drw_text(drw, x - 2 * sp, vertpadbar / 2, w, bh - vertpadbar, lrpad / 2, m->sel->name, 0);
+			drw_text(drw, x - 2 * sp, vertpadbar / 2, (full_title_width ? w : TEXTW(m->sel->name)), bh - vertpadbar, lrpad / 2, m->sel->name, 0);
 			if (m->sel->isfloating)
 				// drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
                 drw_rect(drw, x + boxs, boxs + vertpadbar / 2, boxw, boxw,
