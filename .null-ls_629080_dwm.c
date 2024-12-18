@@ -1207,7 +1207,7 @@ drawbar(Monitor *m)
 	x = drw_text(drw, x, 0, w + 2 * sp, bh, lrpad / 2, m->ltsymbol, 0);
 
 	if ((w = m->ww - tw - stw - x) > bh) {
-        // making the space of title empty, so it can overdraw later
+        // making the space of title empty, so  it can overdraw later
         drw_setscheme(drw, scheme[SchemeInfoNorm]);
         drw_rect(drw, x - sp, 0, w - sp, bh, 1, 1);
 		if (m->sel) {
