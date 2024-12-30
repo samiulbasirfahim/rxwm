@@ -1215,7 +1215,7 @@ drawbar(Monitor *m)
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
 			drw_text(drw, x - 2 * sp, vertpadbar / 2, (full_title_width ? w : TEXTW(m->sel->name)), bh - vertpadbar, lrpad / 2, m->sel->name, 0);
 			if (m->sel->isfloating)
-                drw_rect(drw, x + boxs, boxs + vertpadbar / 2, boxw, boxw,
+                drw_rect(drw, x + boxs - sp * 2, boxs + vertpadbar / 2, boxw, boxw,
                  m->sel->isfixed, 0);
 		}	
     }
@@ -1547,14 +1547,14 @@ loadxrdb(void)
       if (xrdb != NULL) {
 
           XRDB_LOAD_COLOR("dwm.color0", normbgcolor);
-          XRDB_LOAD_COLOR("dwm.color4", normfgcolor);
-          XRDB_LOAD_COLOR("dwm.color4", selfgcolor);
+          XRDB_LOAD_COLOR("dwm.color1", normfgcolor);
+          XRDB_LOAD_COLOR("dwm.color1", selfgcolor);
           XRDB_LOAD_COLOR("dwm.color8", selbgcolor);
           XRDB_LOAD_COLOR("dwm.color0", tagsfgcolor);
-          XRDB_LOAD_COLOR("dwm.color4", ulinecolor);
+          XRDB_LOAD_COLOR("dwm.color1", ulinecolor);
           XRDB_LOAD_COLOR("dwm.color8", tagsbgcolor);
           XRDB_LOAD_COLOR("dwm.color0", normbordercolor);
-          XRDB_LOAD_COLOR("dwm.color4", selbordercolor);
+          XRDB_LOAD_COLOR("dwm.color1", selbordercolor);
           XRDB_LOAD_COLOR("dwm.color2", selscrbordercolor);
           XRDB_LOAD_COLOR("dwm.color0", normscrbordercolor);
       }
@@ -3890,38 +3890,6 @@ grid(Monitor *m)
 }
 
 
-int
-main(int argc, char *argv[])
-{
-	if (argc == 2 && !strcmp("-v", argv[1]))
-		die("dwm-"VERSION);
-	else if (argc != 1)
-		die("usage: dwm [-v]");
-	if (!setlocale(LC_CTYPE, "") || !XSupportsLocale())
-		fputs("warning: no locale support\n", stderr);
-	if (!(dpy = XOpenDisplay(NULL)))
-		die("dwm: cannot open display");
-	if (!(xcon = XGetXCBConnection(dpy)))
-		die("dwm: cannot get xcb connection\n");
-	checkotherwm();
-	autostart_exec();
-        XrmInitialize();
-        loadxrdb();
-	setup();
-#ifdef __OpenBSD__
-	if (pledge("stdio rpath proc exec ps", NULL) == -1)
-		die("pledge");
-#endif /* __OpenBSD__ */
-	scan();
-	run();
-	if(restart) execvp(argv[0], argv);
-	cleanup();
-	XCloseDisplay(dpy);
-	return EXIT_SUCCESS;
-}
-
-
-
 void shiftview(const Arg *arg)
 {
 	Arg shifted;
@@ -3959,5 +3927,37 @@ void shiftview(const Arg *arg)
 		} while (tagmask && !(shifted.ui & tagmask));
 
 	view(&shifted);
+}
+
+
+
+int
+main(int argc, char *argv[])
+{
+	if (argc == 2 && !strcmp("-v", argv[1]))
+		die("dwm-"VERSION);
+	else if (argc != 1)
+		die("usage: dwm [-v]");
+	if (!setlocale(LC_CTYPE, "") || !XSupportsLocale())
+		fputs("warning: no locale support\n", stderr);
+	if (!(dpy = XOpenDisplay(NULL)))
+		die("dwm: cannot open display");
+	if (!(xcon = XGetXCBConnection(dpy)))
+		die("dwm: cannot get xcb connection\n");
+	checkotherwm();
+	autostart_exec();
+        XrmInitialize();
+        loadxrdb();
+	setup();
+#ifdef __OpenBSD__
+	if (pledge("stdio rpath proc exec ps", NULL) == -1)
+		die("pledge");
+#endif /* __OpenBSD__ */
+	scan();
+	run();
+	if(restart) execvp(argv[0], argv);
+	cleanup();
+	XCloseDisplay(dpy);
+	return EXIT_SUCCESS;
 }
 
