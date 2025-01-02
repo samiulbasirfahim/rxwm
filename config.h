@@ -2,12 +2,12 @@
 
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
-static const unsigned int gappx     = 10;        /* gaps between windows */
+static const unsigned int gappx     = 14;        /* gaps between windows */
 static const unsigned int snap      = 5;       /* snap pixel */
 static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
 static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
 static const int previewbar         = 0;        /* show the bar in the preview window */
-static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
+static const int swallowfloating    = 1;        /* 1 means swallow floating windows by default */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayonleft  = 0;   /* 0: systray in the right corner, >0: systray on left of status text */
 static const unsigned int systrayspacing = 8;   /* systray spacing */
@@ -16,8 +16,7 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int allowkill          = 1;        /* allow killing clients by default? */
 static const char *fonts[]          = {
-    /* "BlexMono Nerd Font:size=11:style=italic", */
-    "Rxen Sans:size=13",
+    "Rxen sans:size=13",
     "SiyamRupali:size=13",
     "Symbols Nerd Font:size=13",
 };
@@ -25,11 +24,11 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int full_title_width   = 0;        /* 1 means title will took full width of bar */
 static const int empty_tags         = 0;        /* 0 means no empty tags */
 static const int topbar             = 1;        /* 0 means bottom bar */ 
-static const int user_bh            = 2;        /* 2 is the default spacing around the bar's font */
+static const int user_bh            = 0;        /* 2 is the default spacing around the bar's font */
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
-static const int vertpadbar         = 10;        /* vertical padding for statusbar */
-static const int vertpad            = 10;        /* vertical padding of bar */
-static const int sidepad            = 10;       /* horizontal padding of bar */
+static const int vertpadbar         = 14;        /* vertical padding for statusbar */
+static const int vertpad            = 14;        /* vertical padding of bar */
+static const int sidepad            = 14;       /* horizontal padding of bar */
 static char normfgcolor[]           = "#CDD6F4";
 static char normbgcolor[]           = "#222222";
 static char selfgcolor[]            = "#eeeeee";
@@ -74,7 +73,7 @@ static const unsigned int ulinestroke	= 3;	/* thickness / height of the underlin
 static const unsigned int ulinevoffset	= 0;	/* how far above the bottom of the bar the line should appear */
 static const int ulineall 		= 0;	/* 1 to show underline on all tags, 0 for just the active ones */
 
-static const char ptagf[] = "%s";	// format of a tag label 
+static const char ptagf[] = "%s";	// format of a tag label
 /* static const char ptagf[] = "[%s %s]";	// format of a tag label */
 static const char etagf[] = "%s";	// format of an empty tag
 static const int lcaselbl = 0;		// 1 means make tag label lowercase
@@ -88,13 +87,14 @@ static const Rule rules[] = {
 	// { NULL,               NULL,       NULL,           0,            1,          0,          0,          1,         0,        0  }, /* xev */
 	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          0,          0,         -1,        0 },
 	{ "neovim",           NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
-	{ "Firefox",          NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
+	{ "emacs",            NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
+	{ "Firefox",          NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
 	{ "qutebrowser",      NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
 	{ "discord",          NULL,       NULL,           1 << 4,       1,          0,          0,          0,         -1,       0 },
 	{ "Spotify",          NULL,       NULL,           1 << 5,       1,          0,          0,          0,         -1,       0 },
 	{ "mpv",              NULL,       NULL,           1 << 8,       1,          0,          0,          0,         -1,       0 },
 	{ "Nemo",             NULL,       NULL,           0,            1,          0,          0,          0,         -1,       0 },
-	{ "St",               NULL,       NULL,           0,            1,          0,          0,          0,         -1,       0 },
+	{ "St",               NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
 	{ NULL,               NULL,       "spterm",       0,            1,          1,          1,          0,         0,       't' },
 	{ NULL,               NULL,       "random",       0,            1,          1,          0,          1,         0,       'o' },
 	{ NULL,               NULL,       "random1",      0,            1,          1,          0,          1,         0,       'i' },
@@ -158,6 +158,7 @@ static const Key keys[] = {
 	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("bash ~/.local/bin/screenshot_dmenu_c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_n,                     spawn,          SHCMD("st -c neovim -e nvim")},
+	{ MODKEY,                       XK_e,                     spawn,          SHCMD("emacsclient -c")},
 	{ShiftMask,                     XK_F12,                   spawn,          SHCMD("wpctl  set-volume @DEFAULT_SINK@ 0.05+") },
 	{ShiftMask,                     XK_F11,                   spawn,          SHCMD("wpctl  set-volume @DEFAULT_SINK@ 0.05-") },
  	{ShiftMask,                     XK_F10,                   spawn,          SHCMD("wpctl  set-mute @DEFAULT_SINK@ toggle") },
