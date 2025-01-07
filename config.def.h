@@ -2,7 +2,7 @@
 
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
-static const unsigned int gappx     = 14;        /* gaps between windows */
+static const unsigned int gappx     = 10;        /* gaps between windows */
 static const unsigned int snap      = 5;       /* snap pixel */
 static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
 static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
@@ -27,8 +27,8 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const int user_bh            = 0;        /* 2 is the default spacing around the bar's font */
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
 static const int vertpadbar         = 14;        /* vertical padding for statusbar */
-static const int vertpad            = 14;        /* vertical padding of bar */
-static const int sidepad            = 14;       /* horizontal padding of bar */
+static const int vertpad            = 10;        /* vertical padding of bar */
+static const int sidepad            = 8;       /* horizontal padding of bar */
 static char normfgcolor[]           = "#CDD6F4";
 static char normbgcolor[]           = "#222222";
 static char selfgcolor[]            = "#eeeeee";
