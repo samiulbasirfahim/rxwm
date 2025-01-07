@@ -2,7 +2,7 @@
 
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
-static const unsigned int gappx     = 14;        /* gaps between windows */
+static const unsigned int gappx     = 10;        /* gaps between windows */
 static const unsigned int snap      = 5;       /* snap pixel */
 static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
 static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
@@ -16,19 +16,19 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int allowkill          = 1;        /* allow killing clients by default? */
 static const char *fonts[]          = {
-    "Rxen sans:size=13",
-    "SiyamRupali:size=13",
-    "Symbols Nerd Font:size=13",
+    "Rxen sans:size=12.5:style=italic",
+    "SiyamRupali:size=12",
+    "Symbols Nerd Font:size=12",
 };
 static const int showbar            = 1;        /* 0 means no bar */
 static const int full_title_width   = 0;        /* 1 means title will took full width of bar */
 static const int empty_tags         = 0;        /* 0 means no empty tags */
-static const int topbar             = 1;        /* 0 means bottom bar */ 
+static const int topbar             = 0;        /* 0 means bottom bar */ 
 static const int user_bh            = 0;        /* 2 is the default spacing around the bar's font */
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
 static const int vertpadbar         = 14;        /* vertical padding for statusbar */
-static const int vertpad            = 14;        /* vertical padding of bar */
-static const int sidepad            = 14;       /* horizontal padding of bar */
+static const int vertpad            = 0;        /* vertical padding of bar */
+static const int sidepad            = 0;       /* horizontal padding of bar */
 static char normfgcolor[]           = "#CDD6F4";
 static char normbgcolor[]           = "#222222";
 static char selfgcolor[]            = "#eeeeee";
@@ -88,7 +88,7 @@ static const Rule rules[] = {
 	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          0,          0,         -1,        0 },
 	{ "neovim",           NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
 	{ "emacs",            NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
-	{ "Firefox",          NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
+	{ "firefox",          NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
 	{ "qutebrowser",      NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
 	{ "discord",          NULL,       NULL,           1 << 4,       1,          0,          0,          0,         -1,       0 },
 	{ "Spotify",          NULL,       NULL,           1 << 5,       1,          0,          0,          0,         -1,       0 },
@@ -153,7 +153,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_w,                     spawn,          SHCMD("bash ~/.local/bin/set-wallpaper")},
 	{ MODKEY|ShiftMask,             XK_d,                     spawn,          SHCMD("bash ~/.local/bin/display_chose")},
 	{ MODKEY|ShiftMask,             XK_t,                     spawn,          SHCMD("bash ~/.local/bin/theme_picker.sh")},
-	{ MODKEY,                       XK_v,                     spawn,          SHCMD("~/.local/bin/greenclip print | grep . | dmenu -m 0 | xargs -r -d'\n' -I '{}' greenclip print '{}'")},
+	{ MODKEY,                       XK_v,                     spawn,          SHCMD("greenclip print | grep . | dmenu -m 0 | xargs -r -d'\n' -I '{}' greenclip print '{}'")},
 	{0,                             XK_Print,       		  spawn,          SHCMD("bash ~/.local/bin/screenshot_dmenu")},
 	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("bash ~/.local/bin/screenshot_dmenu_c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
