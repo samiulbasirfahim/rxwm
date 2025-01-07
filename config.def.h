@@ -135,7 +135,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static const char *termcmd[]  = { "st", NULL };
-static const char *layoutmenu_cmd = "~/.local/bin/layoutmenu.sh";
+static const char *layoutmenu_cmd = "_dmw_layoutmenu";
 
 /* scratchpads */
 static const char *sptermcmd[] = {"t", "st", "-t", "spterm","-g", "120x24", NULL};
@@ -147,15 +147,15 @@ static const char *sprandom1cmd[] = { "i",  NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_z,                     spawn,          SHCMD("bash ~/.local/bin/launcher") },
-	{ MODKEY,                       XK_x,                     spawn,          SHCMD("bash ~/.local/bin/powermenu")},
-	{ MODKEY|ShiftMask,             XK_w,                     spawn,          SHCMD("bash ~/.local/bin/waldl")},
-	{ MODKEY,                       XK_w,                     spawn,          SHCMD("bash ~/.local/bin/set-wallpaper")},
-	{ MODKEY|ShiftMask,             XK_d,                     spawn,          SHCMD("bash ~/.local/bin/display_chose")},
-	{ MODKEY|ShiftMask,             XK_t,                     spawn,          SHCMD("bash ~/.local/bin/theme_picker.sh")},
+	{ MODKEY,                       XK_z,                     spawn,          SHCMD("launcher") },
+	{ MODKEY,                       XK_x,                     spawn,          SHCMD("powermenu")},
+	{ MODKEY|ShiftMask,             XK_w,                     spawn,          SHCMD("waldl")},
+	{ MODKEY,                       XK_w,                     spawn,          SHCMD("set-wallpaper")},
+	{ MODKEY|ShiftMask,             XK_d,                     spawn,          SHCMD("display_chose")},
+	{ MODKEY|ShiftMask,             XK_t,                     spawn,          SHCMD("theme_picker.sh")},
 	{ MODKEY,                       XK_v,                     spawn,          SHCMD("greenclip print | grep . | dmenu -m 0 | xargs -r -d'\n' -I '{}' greenclip print '{}'")},
-	{0,                             XK_Print,       		  spawn,          SHCMD("bash ~/.local/bin/screenshot_dmenu")},
-	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("bash ~/.local/bin/screenshot_dmenu_c")},
+	{0,                             XK_Print,       		  spawn,          SHCMD("screenshot_dmenu")},
+	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("screenshot_dmenu_c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_n,                     spawn,          SHCMD("st -c neovim -e nvim")},
 	{ MODKEY,                       XK_e,                     spawn,          SHCMD("emacsclient -c")},
