@@ -3,10 +3,10 @@
 /* appearance */
 #include <X11/X.h>
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
-static const unsigned int gappx     = 10;        /* gaps between windows */
+static const unsigned int gappx     = 20;        /* gaps between windows */
 static const unsigned int snap      = 5;       /* snap pixel */
-static const int border_when_only   = 1;        /* 0 means no border for single tiled window */
-static const int scalepreview       = 4;        /* preview scaling (display w and h / scalepreview) */
+static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
+static const int scalepreview       = 5;        /* preview scaling (display w and h / scalepreview) */
 static const int previewbar         = 0;        /* show the bar in the preview window */
 static const int swallowfloating    = 1;        /* 1 means swallow floating windows by default */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
@@ -17,7 +17,7 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int allowkill          = 1;        /* allow killing clients by default? */
 static const char *fonts[]          = {
-    "Rxen sans:size=12:style=italic",
+    "Rxen sans:size=12.5:style=italic",
     "SiyamRupali:size=12",
     "Symbols Nerd Font:size=12",
 };
@@ -27,9 +27,9 @@ static const int empty_tags         = 0;        /* 0 means no empty tags */
 static const int topbar             = 1;        /* 0 means bottom bar */ 
 static const int user_bh            = 0;        /* 2 is the default spacing around the bar's font */
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
-static const int vertpadbar         = 14;        /* vertical padding for statusbar */
+static const int vertpadbar         = 16;        /* vertical padding for statusbar */
 static const int vertpad            = 10;        /* vertical padding of bar */
-static const int sidepad            = 10;       /* horizontal padding of bar */
+static const int sidepad            = 20;       /* horizontal padding of bar */
 
 static char normfgcolor[]           = "#CDD6F4";
 static char normbgcolor[]           = "#222222";
@@ -72,7 +72,7 @@ static const char *const autostart[] = {
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const unsigned int ulinepad	= 0;	/* horizontal padding between the underline and tag */
-static const unsigned int ulinestroke	= 4;	/* thickness / height of the underline */
+static const unsigned int ulinestroke	= 3;	/* thickness / height of the underline */
 static const unsigned int ulinevoffset	= 0;	/* how far above the bottom of the bar the line should appear */
 static const int ulineall 		= 0;	/* 1 to show underline on all tags, 0 for just the active ones */
 

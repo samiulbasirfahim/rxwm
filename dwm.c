@@ -1116,8 +1116,6 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 
 	if (!isCode) {
 		w = TEXTW(text) - lrpad;
-		/* drw_text(drw, x, 0, w, bh, 0, text, 0); */
-
 		drw_text(drw, x - 2 * sp, 0, w, bh, 0, text, 0);
 	}
 
@@ -1214,9 +1212,9 @@ drawbar(Monitor *m)
         drw_setscheme(drw, scheme[SchemeInfoNorm]);
         drw_rect(drw, x - sp, 0, w - sp, bh, 1, 1);
 		if (m->sel) {
-			drw_text(drw, x - 2 * sp, vertpadbar / 2, (full_title_width ? w : TEXTW(m->sel->name)), bh - vertpadbar, lrpad / 2, m->sel->name, 0);
+			/* drw_text(drw, x - 2 * sp, vertpadbar / 2, w, bh - vertpadbar, lrpad / 2, m->sel->name, 0); */
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
-			drw_text(drw, x - 2 * sp, vertpadbar / 2, (full_title_width ? w : TEXTW(m->sel->name)), bh - vertpadbar, lrpad / 2, m->sel->name, 0);
+			drw_text(drw, x - 2 * sp, vertpadbar / 2, (full_title_width ? w : (TEXTW(m->sel->name) >= w ? w : TEXTW(m->sel->name))), bh - vertpadbar, lrpad / 2, m->sel->name, 0);
 			if (m->sel->isfloating)
                 drw_rect(drw, x + boxs - sp * 2, boxs + vertpadbar / 2, boxw, boxw,
                  m->sel->isfixed, 0);
@@ -2273,10 +2271,17 @@ setgaps(const Arg *arg)
     if(selmon->gappx <= sidepad){
         sidepad_dup = selmon->gappx;
     }
-    if(selmon->gappx <= sidepad){
+    if(selmon->gappx <= vertpad){
         vertpad_dup = selmon->gappx;
+    } else {
+        vertpad_dup = vertpad;
     }
-    setup();
+
+    sp = sidepad_dup;
+    vp = (topbar == 1) ? vertpad_dup : - vertpad_dup;
+    updategeom();
+    updatebars();
+    updatebarpos(selmon);
 	arrange(selmon);
 }
 
