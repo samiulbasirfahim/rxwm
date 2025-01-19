@@ -200,6 +200,7 @@ struct Systray {
 	Client *icons;
 };
 
+
 /* function declarations */
 static void applyrules(Client *c);
 static int applysizehints(Client *c, int *x, int *y, int *w, int *h, int interact);
@@ -380,6 +381,8 @@ static xcb_connection_t *xcon;
 
 /* configuration, allows nested code to access above variables */
 #include "config.h"
+
+int sidepad_dup = sidepad, vertpad_dup = vertpad;
 
 struct Pertag {
 	unsigned int curtag, prevtag; /* current and previous tag */
@@ -1203,7 +1206,7 @@ drawbar(Monitor *m)
 		x += w;
 	}
 	w = TEXTW(m->ltsymbol);
-	drw_setscheme(drw, scheme[SchemeUline]);
+	drw_setscheme(drw, scheme[SchemeNorm]);
 	x = drw_text(drw, x, 0, w + 2 * sp, bh, lrpad / 2, m->ltsymbol, 0);
 
 	if ((w = m->ww - tw - stw - x) > bh) {
@@ -1548,14 +1551,15 @@ loadxrdb(void)
 
           XRDB_LOAD_COLOR("dwm.color0", normbgcolor);
           XRDB_LOAD_COLOR("dwm.color1", normfgcolor);
-          XRDB_LOAD_COLOR("dwm.color1", selfgcolor);
+          XRDB_LOAD_COLOR("dwm.color0", selfgcolor);
           XRDB_LOAD_COLOR("dwm.color8", selbgcolor);
+          XRDB_LOAD_COLOR("dwm.color8", normtagsfgcolor);
           XRDB_LOAD_COLOR("dwm.color0", tagsfgcolor);
-          XRDB_LOAD_COLOR("dwm.color1", ulinecolor);
           XRDB_LOAD_COLOR("dwm.color8", tagsbgcolor);
+          XRDB_LOAD_COLOR("dwm.color1", ulinecolor);
           XRDB_LOAD_COLOR("dwm.color0", normbordercolor);
           XRDB_LOAD_COLOR("dwm.color1", selbordercolor);
-          XRDB_LOAD_COLOR("dwm.color2", selscrbordercolor);
+          XRDB_LOAD_COLOR("dwm.color4", selscrbordercolor);
           XRDB_LOAD_COLOR("dwm.color0", normscrbordercolor);
       }
     }
@@ -1711,8 +1715,8 @@ monocle(Monitor *m)
 	if (n > 0) /* override layout symbol */
 		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
 	for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
-        if(selmon->showbar && sidepad > 0)
-            resize(c, m->wx + gappx, m->wy + gappx, m->ww - 2 * c->bw - gappx * 2, m->wh - 2 * c->bw - gappx * 2, 0);
+        if(selmon->showbar && sidepad_dup > 0)
+            resize(c, m->wx + m->gappx, m->wy + m->gappx, m->ww - 2 * c->bw - m->gappx * 2, m->wh - 2 * c->bw - m->gappx * 2, 0);
         else
             resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
 
@@ -2259,17 +2263,23 @@ setgaps(const Arg *arg)
 {
 	if ((arg->i == 0))
 		selmon->gappx = 0;
-  if(arg->i == -999) {
-    selmon->gappx = gappx;
-  }
-	else
-  {
+    if(arg->i == -999) {
+        selmon->gappx = gappx;
+    } else {
 		selmon->gappx += arg->i;
-    if(selmon->gappx <= 0) 
-      selmon->gappx = 0;
-  }
+        if(selmon->gappx <= 0) 
+            selmon->gappx = 0;
+    }
+    if(selmon->gappx <= sidepad){
+        sidepad_dup = selmon->gappx;
+    }
+    if(selmon->gappx <= sidepad){
+        vertpad_dup = selmon->gappx;
+    }
+    setup();
 	arrange(selmon);
 }
+
 
 void
 setsticky(Client *c, int sticky)
@@ -2465,8 +2475,8 @@ setup(void)
 		die("no fonts could be loaded.");
 	lrpad = drw->fonts->h + horizpadbar;
 	bh = drw->fonts->h + vertpadbar + user_bh;
-	sp = sidepad;
-	vp = (topbar == 1) ? vertpad : - vertpad;
+	sp = sidepad_dup;
+	vp = (topbar == 1) ? vertpad_dup : - vertpad_dup;
 
 	updategeom();
 
@@ -3037,8 +3047,8 @@ updatebarpos(Monitor *m)
 	m->wy = m->my;
 	m->wh = m->mh;
 	if (m->showbar) {
-		m->wh = m->wh - vertpad - bh;
-		m->by = m->topbar ? m->wy : m->wy + m->wh + vertpad;
+		m->wh = m->wh - vertpad_dup - bh;
+		m->by = m->topbar ? m->wy : m->wy + m->wh + vertpad_dup;
 		m->wy = m->topbar ? m->wy + bh + vp : m->wy;
 	} else
 		m->by = -bh - vp;
@@ -3651,7 +3661,6 @@ zoom(const Arg *arg)
 }
 
 
-
 void
 centeredmaster(Monitor *m)
 {
@@ -3680,7 +3689,7 @@ centeredmaster(Monitor *m)
 	if (n > m->nmaster) {
 		/* go mfact box in the center if more than nmaster clients */
 		mw = m->nmaster ? m->ww * m->mfact : 0;
-		tw = m->ww - mw - gappx;
+		tw = m->ww - mw - m->gappx;
 
 		if (n - m->nmaster > 1) {
 			/* only one client */
@@ -3690,8 +3699,8 @@ centeredmaster(Monitor *m)
 	}
 
 	if (n < m->nmaster ) { // In case master clients goes out of range
-		mw = m->ww - 2 * gappx;
-		mx = gappx;
+		mw = m->ww - 2 * m->gappx;
+		mx = m->gappx;
 	}
 
 	oty = 0;
@@ -3702,13 +3711,13 @@ centeredmaster(Monitor *m)
 		// 1 client only
 		h = (m->wh - my)  * (c->cfact / mfacts);
 		if ( n - m->nmaster == 1 ){
-			resize(c, m->wx + mx + gappx, m->wy + my + gappx , mw - (2*c->bw) - gappx, h - (2*c->bw) - gappx * 2, 0);
+			resize(c, m->wx + mx + m->gappx, m->wy + my + m->gappx , mw - (2*c->bw) - m->gappx, h - (2*c->bw) - m->gappx * 2, 0);
 		} else if ( n - m->nmaster > 1 ){
-			resize(c, m->wx + mx, m->wy + my + gappx , mw - (2*c->bw), h - (2*c->bw) - gappx * 2, 0);
+			resize(c, m->wx + mx, m->wy + my + m->gappx , mw - (2*c->bw), h - (2*c->bw) - m->gappx * 2, 0);
 		} else {
-			resize(c, m->wx + mx + gappx, m->wy + my + gappx , mw - (2*c->bw) - gappx * 2, h - (2*c->bw) - gappx * 2, 0);
+			resize(c, m->wx + mx + m->gappx, m->wy + my + m->gappx , mw - (2*c->bw) - m->gappx * 2, h - (2*c->bw) - m->gappx * 2, 0);
 		}
-		my += HEIGHT(c) + gappx;
+		my += HEIGHT(c) + m->gappx;
 		mfacts -= c->cfact;
 	} else {
 		/* stack clients are stacked vertically */
@@ -3716,22 +3725,22 @@ centeredmaster(Monitor *m)
 			// No master
 			h = (m->wh - ety) * (c->cfact / lfacts);
 			if ( n - m->nmaster == n ){
-				resize(c, m->wx + gappx, m->wy + ety + gappx, tw - (2*c->bw) - gappx, h - (2*c->bw) - gappx * 2, 0);
+				resize(c, m->wx + m->gappx, m->wy + ety + m->gappx, tw - (2*c->bw) - m->gappx, h - (2*c->bw) - m->gappx * 2, 0);
 			} else {
-				resize(c, m->wx + gappx, m->wy + ety + gappx, tw - (2*c->bw) - gappx * 2, h - (2*c->bw) - gappx * 2, 0);
+				resize(c, m->wx + m->gappx, m->wy + ety + m->gappx, tw - (2*c->bw) - m->gappx * 2, h - (2*c->bw) - m->gappx * 2, 0);
 			}
-			ety += HEIGHT(c) + gappx;
+			ety += HEIGHT(c) + m->gappx;
 			lfacts -= c->cfact;
 		} else { // Odd clients
 			h = (m->wh - oty) * (c->cfact / rfacts);
 			// 1 client only
 			if ( n - m->nmaster == 1 ){
-				resize(c, m->wx + mx + mw + gappx, m->wy + oty + gappx, tw - (2*c->bw) - gappx, h - (2*c->bw) - gappx * 2, 0);
+				resize(c, m->wx + mx + mw + m->gappx, m->wy + oty + m->gappx, tw - (2*c->bw) - m->gappx, h - (2*c->bw) - m->gappx * 2, 0);
 			// No master
 			} else {
-				resize(c, m->wx + mx + mw + gappx, m->wy + oty + gappx, tw - (2*c->bw) - gappx * 2, h - (2*c->bw) - gappx * 2, 0);
+				resize(c, m->wx + mx + mw + m->gappx, m->wy + oty + m->gappx, tw - (2*c->bw) - m->gappx * 2, h - (2*c->bw) - m->gappx * 2, 0);
 			}
-			oty += HEIGHT(c) + gappx;
+			oty += HEIGHT(c) + m->gappx;
 			rfacts -= c->cfact;
 		}
 	}
@@ -3806,7 +3815,7 @@ bottomstack(struct Monitor *m)
 		return;
 	if(n == 1){
 		c = nexttiled(m->clients);
-		resize(c, m->wx + gappx, m->wy + gappx, m->ww - 2 * c->bw - 2 * gappx, m->wh - 2 * c->bw - 2 * gappx, 0);
+		resize(c, m->wx + m->gappx, m->wy + m->gappx, m->ww - 2 * c->bw - 2 * m->gappx, m->wh - 2 * c->bw - 2 * m->gappx, 0);
 		return;
 	}
 
@@ -3817,19 +3826,19 @@ bottomstack(struct Monitor *m)
 	for (i = 0, mx = tx = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 		if (i < m->nmaster) {
 			w = (m->ww - mx) * (c->cfact / mfacts);
-			resize(c, m->wx + mx + gappx, m->wy + gappx, w - (2*c->bw) - 2 * gappx, mh - 2*c->bw - 2 * gappx, 0);
+			resize(c, m->wx + mx + m->gappx, m->wy + m->gappx, w - (2*c->bw) - 2 * m->gappx, mh - 2*c->bw - 2 * m->gappx, 0);
 			if(mx + WIDTH(c) < m->mw)
-				mx += WIDTH(c) + gappx;
+				mx += WIDTH(c) + m->gappx;
 			mfacts -= c->cfact;
 		} else {
 			w = (m->ww - tx) * (c->cfact / sfacts);
 			if ( m->nmaster == 0 ) {
-				resize(c, m->wx + tx + gappx, m->wy + mh + gappx, w - (2*c->bw) - 2 * gappx, m->wh - mh - 2*(c->bw) - 2 * gappx , 0);
+				resize(c, m->wx + tx + m->gappx, m->wy + mh + m->gappx, w - (2*c->bw) - 2 * m->gappx, m->wh - mh - 2*(c->bw) - 2 * m->gappx , 0);
 			} else {
-				resize(c, m->wx + tx + gappx, m->wy + mh, w - (2*c->bw) - 2 * gappx, m->wh - mh - 2*(c->bw) - gappx, 0);
+				resize(c, m->wx + tx + m->gappx, m->wy + mh, w - (2*c->bw) - 2 * m->gappx, m->wh - mh - 2*(c->bw) - m->gappx, 0);
 			}
 			if(tx + WIDTH(c) < m->mw)
-				tx += WIDTH(c) + gappx ;
+				tx += WIDTH(c) + m->gappx ;
 			sfacts -= c->cfact;
 		}
 }
