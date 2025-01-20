@@ -3,8 +3,8 @@
 /* appearance */
 #include <X11/X.h>
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
-static const unsigned int gappx     = 20;        /* gaps between windows */
-static const unsigned int snap      = 5;       /* snap pixel */
+static const unsigned int gappx     = 12;        /* gaps between windows */
+static const unsigned int snap      = 6;       /* snap pixel */
 static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
 static const int scalepreview       = 5;        /* preview scaling (display w and h / scalepreview) */
 static const int previewbar         = 0;        /* show the bar in the preview window */
@@ -17,19 +17,19 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int allowkill          = 1;        /* allow killing clients by default? */
 static const char *fonts[]          = {
-    "Rxen sans:size=12.5:style=italic",
-    "SiyamRupali:size=12",
+    "Rxen sans:size=11:style=italic",
     "Symbols Nerd Font:size=12",
+    "SiyamRupali:size=12",
 };
 static const int showbar            = 1;        /* 0 means no bar */
 static const int full_title_width   = 0;        /* 1 means title will took full width of bar */
 static const int empty_tags         = 0;        /* 0 means no empty tags */
 static const int topbar             = 1;        /* 0 means bottom bar */ 
-static const int user_bh            = 0;        /* 2 is the default spacing around the bar's font */
+static const int user_bh            = 2;        /* 2 is the default spacing around the bar's font */
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
-static const int vertpadbar         = 16;        /* vertical padding for statusbar */
-static const int vertpad            = 10;        /* vertical padding of bar */
-static const int sidepad            = 20;       /* horizontal padding of bar */
+static const int vertpadbar         = 14;        /* vertical padding for statusbar */
+static const int vertpad            = 12;        /* vertical padding of bar */
+static const int sidepad            = 12;       /* horizontal padding of bar */
 
 static char normfgcolor[]           = "#CDD6F4";
 static char normbgcolor[]           = "#222222";
@@ -172,10 +172,10 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_k,                     focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_u,                     incnmaster,     {.i = +1 } },
 	{ MODKEY,                       XK_d,                     incnmaster,     {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_h,                     setmfact,       {.f = -0.1} },
-	{ MODKEY|ShiftMask,             XK_l,                     setmfact,       {.f = +0.1} },
-	{ MODKEY|ShiftMask,             XK_k,                     setcfact,       {.f = +0.4} },
-	{ MODKEY|ShiftMask,             XK_j,                     setcfact,       {.f = -0.4} },
+	{ MODKEY|ShiftMask,             XK_h,                     setmfact,       {.f = -0.05} },
+	{ MODKEY|ShiftMask,             XK_l,                     setmfact,       {.f = +0.05} },
+	{ MODKEY|ShiftMask,             XK_k,                     setcfact,       {.f = +0.25} },
+	{ MODKEY|ShiftMask,             XK_j,                     setcfact,       {.f = -0.25} },
 	/* { MODKEY|ShiftMask,             XK_o,                     setcfact,       {.f =  0.00} }, */
 	{ MODKEY,                       XK_h,                     shiftview,      { .i = -1 } },
 	{ MODKEY,                       XK_l,                     shiftview,      { .i = +1 } },
