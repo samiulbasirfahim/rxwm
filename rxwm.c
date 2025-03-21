@@ -6,7 +6,7 @@
  * events about window (dis-)appearance. Only one X connection at a time is
  * allowed to select for this event mask.
  *
- * The event handlers of dwm are organized in an array which is accessed
+ * The event handlers of rxwm are organized in an array which is accessed
  * whenever a new event has been fetched. This allows event dispatching
  * in O(1) time.
  *
@@ -399,7 +399,7 @@ unsigned int tagw[LENGTH(tags)];
 /* compile-time check if all tags fit into an unsigned int bit array. */
 struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
 
-/* dwm will keep pid's of processes from autostart array and kill them at quit */
+/* rxwm will keep pid's of processes from autostart array and kill them at quit */
 static pid_t *autostart_pids;
 static size_t autostart_len;
 
@@ -418,7 +418,7 @@ autostart_exec(void) {
 		if ((autostart_pids[i] = fork()) == 0) {
 			setsid();
 			execvp(*p, (char *const *)p);
-			fprintf(stderr, "dwm: execvp %s\n", *p);
+			fprintf(stderr, "rxwm: execvp %s\n", *p);
 			perror(" failed");
 			_exit(EXIT_FAILURE);
 		}
@@ -1547,18 +1547,18 @@ loadxrdb(void)
 
       if (xrdb != NULL) {
 
-          XRDB_LOAD_COLOR("dwm.color0", normbgcolor);
-          XRDB_LOAD_COLOR("dwm.color1", normfgcolor);
-          XRDB_LOAD_COLOR("dwm.color0", selfgcolor);
-          XRDB_LOAD_COLOR("dwm.color8", selbgcolor);
-          XRDB_LOAD_COLOR("dwm.color8", normtagsfgcolor);
-          XRDB_LOAD_COLOR("dwm.color0", tagsfgcolor);
-          XRDB_LOAD_COLOR("dwm.color8", tagsbgcolor);
-          XRDB_LOAD_COLOR("dwm.color1", ulinecolor);
-          XRDB_LOAD_COLOR("dwm.color0", normbordercolor);
-          XRDB_LOAD_COLOR("dwm.color1", selbordercolor);
-          XRDB_LOAD_COLOR("dwm.color4", selscrbordercolor);
-          XRDB_LOAD_COLOR("dwm.color0", normscrbordercolor);
+          XRDB_LOAD_COLOR("rxwm.color0", normbgcolor);
+          XRDB_LOAD_COLOR("rxwm.color1", normfgcolor);
+          XRDB_LOAD_COLOR("rxwm.color0", selfgcolor);
+          XRDB_LOAD_COLOR("rxwm.color8", selbgcolor);
+          XRDB_LOAD_COLOR("rxwm.color8", normtagsfgcolor);
+          XRDB_LOAD_COLOR("rxwm.color0", tagsfgcolor);
+          XRDB_LOAD_COLOR("rxwm.color8", tagsbgcolor);
+          XRDB_LOAD_COLOR("rxwm.color1", ulinecolor);
+          XRDB_LOAD_COLOR("rxwm.color0", normbordercolor);
+          XRDB_LOAD_COLOR("rxwm.color1", selbordercolor);
+          XRDB_LOAD_COLOR("rxwm.color4", selscrbordercolor);
+          XRDB_LOAD_COLOR("rxwm.color0", normscrbordercolor);
       }
     }
   }
@@ -2403,7 +2403,7 @@ takepreview(void)
 		XSync(dpy, False);
 
 		if (!(image = imlib_create_image(sw, sh))) {
-			fprintf(stderr, "dwm: imlib: failed to create image, skipping.");
+			fprintf(stderr, "rxwm: imlib: failed to create image, skipping.");
 			continue;
 		}
 		imlib_context_set_image(image);
@@ -2540,7 +2540,7 @@ setup(void)
 	XChangeProperty(dpy, wmcheckwin, netatom[NetWMCheck], XA_WINDOW, 32,
 		PropModeReplace, (unsigned char *) &wmcheckwin, 1);
 	XChangeProperty(dpy, wmcheckwin, netatom[NetWMName], utf8string, 8,
-		PropModeReplace, (unsigned char *) "dwm", 3);
+		PropModeReplace, (unsigned char *) "rxwm", 3);
 	XChangeProperty(dpy, root, netatom[NetWMCheck], XA_WINDOW, 32,
 		PropModeReplace, (unsigned char *) &wmcheckwin, 1);
 	/* EWMH support per view */
@@ -2623,7 +2623,7 @@ spawn(const Arg *arg)
 		sigaction(SIGCHLD, &sa, NULL);
 
 		execvp(((char **)arg->v)[0], (char **)arg->v);
-		die("dwm: execvp '%s' failed:", ((char **)arg->v)[0]);
+		die("rxwm: execvp '%s' failed:", ((char **)arg->v)[0]);
 	}
 }
 
@@ -2634,7 +2634,7 @@ void spawnscratch(const Arg *arg)
 			close(ConnectionNumber(dpy));
 		setsid();
 		execvp(((char **)arg->v)[1], ((char **)arg->v)+1);
-		fprintf(stderr, "dwm: execvp %s", ((char **)arg->v)[1]);
+		fprintf(stderr, "rxwm: execvp %s", ((char **)arg->v)[1]);
 		perror(" failed");
 		exit(EXIT_SUCCESS);
 	}
@@ -3028,7 +3028,7 @@ updatebars(void)
 		.event_mask = ButtonPressMask|ExposureMask|PointerMotionMask
 	};
 
-	XClassHint ch = {"dwm", "dwm"};
+	XClassHint ch = {"rxwm", "rxwm"};
 	for (m = mons; m; m = m->next) {
 		if (!m->tagwin) {
       if(topbar) {
@@ -3226,7 +3226,7 @@ void
 updatestatus(void)
 {
 	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
-		strcpy(stext, "dwm-"VERSION);
+		strcpy(stext, "rxwm-"VERSION);
 	drawbar(selmon);
 	updatesystray();
 }
@@ -3310,7 +3310,7 @@ updatesystray(void)
 			XSync(dpy, False);
 		}
 		else {
-			fprintf(stderr, "dwm: unable to obtain system tray.\n");
+			fprintf(stderr, "rxwm: unable to obtain system tray.\n");
 			free(systray);
 			systray = NULL;
 			return;
@@ -3617,7 +3617,7 @@ xerror(Display *dpy, XErrorEvent *ee)
 	|| (ee->request_code == X_GrabKey && ee->error_code == BadAccess)
 	|| (ee->request_code == X_CopyArea && ee->error_code == BadDrawable))
 		return 0;
-	fprintf(stderr, "dwm: fatal error: request code=%d, error code=%d\n",
+	fprintf(stderr, "rxwm: fatal error: request code=%d, error code=%d\n",
 		ee->request_code, ee->error_code);
 	return xerrorxlib(dpy, ee); /* may call exit */
 }
@@ -3633,7 +3633,7 @@ xerrordummy(Display *dpy, XErrorEvent *ee)
 int
 xerrorstart(Display *dpy, XErrorEvent *ee)
 {
-	die("dwm: another window manager is already running");
+	die("rxwm: another window manager is already running");
 	return -1;
 }
 
@@ -3960,15 +3960,15 @@ int
 main(int argc, char *argv[])
 {
 	if (argc == 2 && !strcmp("-v", argv[1]))
-		die("dwm-"VERSION);
+		die("rxwm-"VERSION);
 	else if (argc != 1)
-		die("usage: dwm [-v]");
+		die("usage: rxwm [-v]");
 	if (!setlocale(LC_CTYPE, "") || !XSupportsLocale())
 		fputs("warning: no locale support\n", stderr);
 	if (!(dpy = XOpenDisplay(NULL)))
-		die("dwm: cannot open display");
+		die("rxwm: cannot open display");
 	if (!(xcon = XGetXCBConnection(dpy)))
-		die("dwm: cannot get xcb connection\n");
+		die("rxwm: cannot get xcb connection\n");
 	checkotherwm();
 	autostart_exec();
         XrmInitialize();
