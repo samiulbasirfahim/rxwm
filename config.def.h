@@ -1,10 +1,10 @@
 /* See LICENSE file for copyright and license details. */
+/* <-------*-------> */
 
 /* appearance */
-#include <X11/X.h>
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int gappx     = 12;        /* gaps between windows */
-static const unsigned int snap      = 6;       /* snap pixel */
+static const unsigned int snap      = 4;       /* snap pixel */
 static const int border_when_only   = 0;        /* 0 means no border for single tiled window */
 static const int scalepreview       = 5;        /* preview scaling (display w and h / scalepreview) */
 static const int previewbar         = 0;        /* show the bar in the preview window */
@@ -17,19 +17,18 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int allowkill          = 1;        /* allow killing clients by default? */
 static const char *fonts[]          = {
-    "Rxen sans:size=11:style=italic",
+    "Victor Mono:weight=160:size=10.8",
     "Symbols Nerd Font:size=12",
-    "SiyamRupali:size=12",
 };
 static const int showbar            = 1;        /* 0 means no bar */
 static const int full_title_width   = 0;        /* 1 means title will took full width of bar */
 static const int empty_tags         = 0;        /* 0 means no empty tags */
 static const int topbar             = 1;        /* 0 means bottom bar */ 
-static const int user_bh            = 2;        /* 2 is the default spacing around the bar's font */
+static const int user_bh            = 0;        /* 2 is the default spacing around the bar's font */
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
-static const int vertpadbar         = 14;        /* vertical padding for statusbar */
-static const int vertpad            = 12;        /* vertical padding of bar */
-static const int sidepad            = 12;       /* horizontal padding of bar */
+static const int vertpadbar         = 12;        /* vertical padding for statusbar */
+static const int vertpad            = 8;        /* vertical padding of bar */
+static const int sidepad            = 8;       /* horizontal padding of bar */
 
 static char normfgcolor[]           = "#CDD6F4";
 static char normbgcolor[]           = "#222222";
@@ -90,6 +89,7 @@ static const Rule rules[] = {
 	// { NULL,               NULL,       NULL,           0,            1,          0,          0,          1,         0,        0  }, /* xev */
 	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          0,          0,         -1,        0 },
 	{ "neovim",           NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
+	{ "neovide",          NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
 	{ "emacs",            NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
 	{ "Emacs",            NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
 	{ "firefox",          NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
@@ -104,16 +104,17 @@ static const Rule rules[] = {
 	{ NULL,               NULL,       "random1",      0,            1,          1,          0,          1,         0,       'i' },
 	{ NULL,               NULL,       "spmix",        0,            1,          1,          0,          1,         0,       'a' },
 	{ NULL,               NULL,       "sptop",        0,            1,          1,          0,          1,         0,       'p' },
+	{ NULL,               NULL,       "spranger",        0,            1,          1,          0,          1,         0,       'e' },
 	{ NULL,               NULL,       "Event Tester", 0,            1,          0,          0,          1,         -1,        0  }, /* xev */
 };
 
 /* layout(s) */
-static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
+static const float mfact     = 0.65; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 
-static const int alt_lt = 0; /* 1 means it'll use icon */
+static const int alt_lt = 1; /* 1 means it'll use icon */
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ (alt_lt ? " " : "[]="),      tile },    // first entry is default
@@ -139,12 +140,13 @@ static const Layout layouts[] = {
 
 /* commands */
 static const char *termcmd[]  = { "st", NULL };
-static const char *layoutmenu_cmd = "dmw_layoutmenu";
+static const char *layoutmenu_cmd = "dwm_layoutmenu";
 
 /* scratchpads */
 static const char *sptermcmd[] = {"t", "st", "-t", "spterm","-g", "120x24", NULL};
 static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "120x24", "-e", "btop", NULL};
 static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "120x24", "-e", "pulsemixer", NULL};
+static const char *spranger[]    = {"e", "st", "-t", "spranger", "-g", "120x24", "-e", "ranger", NULL};
 static const char *sprandomcmd[] = { "o",  NULL };
 static const char *sprandom1cmd[] = { "i",  NULL };
 
@@ -160,7 +162,7 @@ static const Key keys[] = {
 	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("screenshot_dmenu -c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_n,                     spawn,          SHCMD("st -c neovim -e nvim")},
-	{ MODKEY,                       XK_e,                     spawn,          SHCMD("emacsclient -c")},
+	{ MODKEY,                       XK_e,                     spawn,          SHCMD("emacsclient -c -a 'emacs --daemon'")},
 	{ShiftMask,                     XK_F12,                   spawn,          SHCMD("wpctl  set-volume @DEFAULT_SINK@ 0.05+") },
 	{ShiftMask,                     XK_F11,                   spawn,          SHCMD("wpctl  set-volume @DEFAULT_SINK@ 0.05-") },
  	{ShiftMask,                     XK_F10,                   spawn,          SHCMD("wpctl  set-mute @DEFAULT_SINK@ toggle") },
@@ -185,7 +187,8 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_t,                     setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,                     setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,                     setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_space,                 layoutmenu,       {0} },
+	{ MODKEY|Mod1Mask,                       XK_space,                 layoutmenu,       {0} },
+    { MODKEY,                       XK_space,                 setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,                 togglefloating, {0} },
 	{ MODKEY|ShiftMask,             XK_f,                     togglefullscr,  {0} },
 	{ MODKEY,                       XK_g,                     toggleallowkill,{0} },
@@ -197,10 +200,16 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_comma,                 tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period,                tagmon,         {.i = +1 } },
 
+
 	{ MODKEY,                       XK_minus,                 setgaps,        {.i = -5 } },
 	{ MODKEY,                       XK_equal,                 setgaps,        {.i = +5 } },
 	{ MODKEY|ShiftMask,             XK_minus,                 setgaps,        {.i = 0  } },
 	{ MODKEY|ShiftMask,             XK_equal,                 setgaps,        {.i = -999 } },
+
+	{ MODKEY|Mod1Mask,                       XK_minus,                 setbargaps,        {.i = -10} },
+	{ MODKEY|Mod1Mask,                       XK_equal,                 setbargaps,        {.i = +10} },
+	{ MODKEY|Mod1Mask|ShiftMask,             XK_minus,                 setbargaps,        {.i = -110} },
+	{ MODKEY|Mod1Mask|ShiftMask,             XK_equal,                 setbargaps,        {.i = +110} },
 
 	{ MODKEY,                       XK_F5,                    xrdb,           {.v = NULL } },
 	TAGKEYS(                        XK_1,                      0)
@@ -217,6 +226,7 @@ static const Key keys[] = {
 
 
 	{ MODKEY,                       XK_Escape,  togglescratch,  {.v = sptermcmd } },
+	{ MODKEY,                       XK_y,       togglescratch,  {.v = spranger } },
 	{ MODKEY,                       XK_a,      togglescratch,  {.v = spmixcmd } },
 	{ MODKEY,                       XK_p,      togglescratch,  {.v = sptopcmd } },
 

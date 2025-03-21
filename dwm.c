@@ -271,6 +271,7 @@ static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
 static void setsticky(Client *c, int sticky);
 static void setgaps(const Arg *arg);
+static void setbargaps(const Arg *arg);
 static void setlayout(const Arg *arg);
 static void setcfact(const Arg *arg);
 static void setmfact(const Arg *arg);
@@ -439,7 +440,7 @@ applyrules(Client *c)
 	/* rule matching */
 	c->isfloating = 0;
 	c->tags = 0;
-  c->allowkill = allowkill;
+    c->allowkill = allowkill;
 	c->scratchkey = 0;
 	XGetClassHint(dpy, c->win, &ch);
 	class    = ch.res_class ? ch.res_class : broken;
@@ -577,7 +578,6 @@ attachstack(Client *c)
 void
 swallow(Client *p, Client *c)
 {
-
 	if (c->noswallow || c->isterminal)
 		return;
 	if (c->noswallow && !swallowfloating && c->isfloating)
@@ -1713,10 +1713,10 @@ monocle(Monitor *m)
 	if (n > 0) /* override layout symbol */
 		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
 	for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
-        if(selmon->showbar && sidepad_dup > 0)
+        /* if(selmon->showbar && sidepad_dup > 0) */
             resize(c, m->wx + m->gappx, m->wy + m->gappx, m->ww - 2 * c->bw - m->gappx * 2, m->wh - 2 * c->bw - m->gappx * 2, 0);
-        else
-            resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
+        /* else */
+        /*     resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0); */
 
 }
 
@@ -2259,6 +2259,7 @@ setfullscreen(Client *c, int fullscreen)
 void
 setgaps(const Arg *arg)
 {
+
 	if ((arg->i == 0))
 		selmon->gappx = 0;
     if(arg->i == -999) {
@@ -2268,13 +2269,23 @@ setgaps(const Arg *arg)
         if(selmon->gappx <= 0) 
             selmon->gappx = 0;
     }
-    if(selmon->gappx <= sidepad){
-        sidepad_dup = selmon->gappx;
-    }
-    if(selmon->gappx <= vertpad){
-        vertpad_dup = selmon->gappx;
+
+
+    arrange(selmon); 
+
+}
+
+
+void setbargaps(const Arg *arg){
+    if(abs(arg->i) > 100){
+        sidepad_dup += (arg->i % 100);
+        if(sidepad_dup < 0)
+            sidepad_dup = 0;
     } else {
-        vertpad_dup = vertpad;
+        vertpad_dup += arg->i;
+        if(vertpad_dup<0){
+            vertpad_dup = 0;
+        }
     }
 
     sp = sidepad_dup;
@@ -2282,7 +2293,7 @@ setgaps(const Arg *arg)
     updategeom();
     updatebars();
     updatebarpos(selmon);
-	arrange(selmon);
+    arrange(selmon); 
 }
 
 
