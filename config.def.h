@@ -23,12 +23,12 @@ static const char *fonts[]          = {
 static const int showbar            = 1;        /* 0 means no bar */
 static const int full_title_width   = 0;        /* 1 means title will took full width of bar */
 static const int empty_tags         = 0;        /* 0 means no empty tags */
-static const int topbar             = 1;        /* 0 means bottom bar */ 
-static const int user_bh            = 0;        /* 2 is the default spacing around the bar's font */
+static const int topbar             = 0;        /* 0 means bottom bar */ 
+static const int user_bh            = 1;        /* 2 is the default spacing around the bar's font */
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
-static const int vertpadbar         = 12;        /* vertical padding for statusbar */
-static const int vertpad            = 8;        /* vertical padding of bar */
-static const int sidepad            = 8;       /* horizontal padding of bar */
+static const int vertpadbar         = 10;        /* vertical padding for statusbar */
+static const int vertpad            = 0;        /* vertical padding of bar */
+static const int sidepad            = 0;       /* horizontal padding of bar */
 
 static char normfgcolor[]           = "#CDD6F4";
 static char normbgcolor[]           = "#222222";
@@ -64,6 +64,7 @@ static const char *const autostart[] = {
   "dwmblocks", NULL,
   "wired", NULL,
   "greenclip", "daemon", NULL,
+  "emacs", "--daemon", NULL,
    NULL /* terminate */
 };
 
@@ -94,8 +95,11 @@ static const Rule rules[] = {
 	{ "Emacs",            NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
 	{ "firefox",          NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
 	{ "qutebrowser",      NULL,       NULL,           1 << 4,       1,          0,          0,          0,         -1,       0 },
+	{ "chromium",         NULL,       NULL,           1 << 4,       1,          0,          0,          0,         -1,       0 },
+	{ "Chromium",         NULL,       NULL,           1 << 4,       1,          0,          0,          0,         -1,       0 },
 	{ "discord",          NULL,       NULL,           1 << 5,       1,          0,          0,          0,         -1,       0 },
 	{ "Spotify",          NULL,       NULL,           1 << 6,       1,          0,          0,          0,         -1,       0 },
+	{ "steam",            NULL,       NULL,         1 << 7,       1,          0,          0,          0,         -1,       0 },
 	{ "mpv",              NULL,       NULL,           1 << 8,       1,          0,          0,          0,         -1,       0 },
 	{ "Nemo",             NULL,       NULL,           0,            1,          0,          0,          0,         -1,       0 },
 	{ "St",               NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
@@ -143,10 +147,10 @@ static const char *termcmd[]  = { "st", NULL };
 static const char *layoutmenu_cmd = "dwm_layoutmenu";
 
 /* scratchpads */
-static const char *sptermcmd[] = {"t", "st", "-t", "spterm","-g", "120x24", NULL};
-static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "120x24", "-e", "btop", NULL};
-static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "120x24", "-e", "pulsemixer", NULL};
-static const char *spranger[]    = {"e", "st", "-t", "spranger", "-g", "120x24", "-e", "ranger", NULL};
+static const char *sptermcmd[] = {"t", "st", "-t", "spterm","-g", "126x24", NULL};
+static const char *sptopcmd[]  = {"p", "st", "-t", "sptop", "-g", "126x24", "-e", "btop", NULL};
+static const char *spmixcmd[]  = {"a", "st", "-t", "spmix", "-g", "126x24", "-e", "pulsemixer", NULL};
+static const char *spranger[]    = {"e", "st", "-t", "spranger", "-g", "126x24", "-e", "ranger", NULL};
 static const char *sprandomcmd[] = { "o",  NULL };
 static const char *sprandom1cmd[] = { "i",  NULL };
 
@@ -161,8 +165,9 @@ static const Key keys[] = {
 	{0,                             XK_Print,       		  spawn,          SHCMD("screenshot_dmenu")},
 	{ShiftMask,                     XK_Print,       		  spawn,          SHCMD("screenshot_dmenu -c")},
 	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_n,                     spawn,          SHCMD("st -c neovim -e nvim")},
-	{ MODKEY,                       XK_e,                     spawn,          SHCMD("emacsclient -c -a 'emacs --daemon'")},
+	// { MODKEY,                       XK_n,                     spawn,          SHCMD("st -c neovim -e nvim")},
+	{ MODKEY,                       XK_n,                     spawn,          SHCMD("neovide")},
+	{ MODKEY,                       XK_e,                     spawn,          SHCMD("emacsclient -c -a ''")},
 	{ShiftMask,                     XK_F12,                   spawn,          SHCMD("wpctl  set-volume @DEFAULT_SINK@ 0.05+") },
 	{ShiftMask,                     XK_F11,                   spawn,          SHCMD("wpctl  set-volume @DEFAULT_SINK@ 0.05-") },
  	{ShiftMask,                     XK_F10,                   spawn,          SHCMD("wpctl  set-mute @DEFAULT_SINK@ toggle") },
@@ -184,6 +189,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Return,                zoom,           {0} },
 	{ MODKEY,                       XK_Tab,                   view,           {0} },
 	{ MODKEY,                       XK_q,                     killclient,     {0} },
+	{ MODKEY|ShiftMask,             XK_q,                     spawn,     SHCMD("xkill") },
 	{ MODKEY,                       XK_t,                     setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,                     setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,                     setlayout,      {.v = &layouts[2]} },
