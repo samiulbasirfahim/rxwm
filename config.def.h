@@ -2,6 +2,7 @@
 /* <-------*-------> */
 
 /* appearance */
+#include <X11/X.h>
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int gappx     = 12;        /* gaps between windows */
 static const unsigned int snap      = 4;       /* snap pixel */
@@ -60,10 +61,12 @@ static char *colors[][3] = {
 /* autostart applications */
 static const char *const autostart[] = {
   "picom", "-b", NULL,
+  "dunst", NULL,
   "load-wallpaper", NULL,
   "dwmblocks", NULL,
   "wired", NULL,
   "greenclip", "daemon", NULL,
+  "gnome-screensaver", " --no-daemon", NULL,
   "emacs", "--daemon", NULL,
    NULL /* terminate */
 };
@@ -90,16 +93,16 @@ static const Rule rules[] = {
 	// { NULL,               NULL,       NULL,           0,            1,          0,          0,          1,         0,        0  }, /* xev */
 	{ "Nsxiv",            NULL,       NULL,           0,            1,          1,          0,          0,         -1,        0 },
 	{ "neovim",           NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
-	{ "neovide",          NULL,       NULL,           1 << 1,       1,          0,          0,          0,         -1,       0 },
-	{ "emacs",            NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
-	{ "Emacs",            NULL,       NULL,           1 << 2,       1,          0,          0,          0,         -1,       0 },
-	{ "firefox",          NULL,       NULL,           1 << 3,       1,          0,          0,          0,         -1,       0 },
-	{ "qutebrowser",      NULL,       NULL,           1 << 4,       1,          0,          0,          0,         -1,       0 },
-	{ "chromium",         NULL,       NULL,           1 << 4,       1,          0,          0,          0,         -1,       0 },
-	{ "Chromium",         NULL,       NULL,           1 << 4,       1,          0,          0,          0,         -1,       0 },
-	{ "discord",          NULL,       NULL,           1 << 5,       1,          0,          0,          0,         -1,       0 },
-	{ "Spotify",          NULL,       NULL,           1 << 6,       1,          0,          0,          0,         -1,       0 },
-	{ "steam",            NULL,       NULL,         1 << 7,       1,          0,          0,          0,         -1,       0 },
+	{ "neovide",          NULL,       NULL,           1 << 1,       1,          0,          0,          0,         0,       0 },
+	{ "emacs",            NULL,       NULL,           1 << 2,       1,          0,          0,          0,         0,       0 },
+	{ "Emacs",            NULL,       NULL,           1 << 2,       1,          0,          0,          0,         0,       0 },
+	{ "firefox",          NULL,       NULL,           1 << 3,       1,          0,          0,          0,         1,       0 },
+	{ "qutebrowser",      NULL,       NULL,           1 << 4,       1,          0,          0,          0,         1,       0 },
+	{ "chromium",         NULL,       NULL,           1 << 4,       1,          0,          0,          0,         1,       0 },
+	{ "Chromium",         NULL,       NULL,           1 << 4,       1,          0,          0,          0,         1,       0 },
+	{ "discord",          NULL,       NULL,           1 << 5,       1,          0,          0,          0,         1,       0 },
+	{ "Spotify",          NULL,       NULL,           1 << 6,       1,          0,          0,          0,         1,       0 },
+	{ "teams-for-linux",  NULL,       NULL,           1 << 7,       1,          0,          0,          0,           0,       0 },
 	{ "mpv",              NULL,       NULL,           1 << 8,       1,          0,          0,          0,         -1,       0 },
 	{ "Nemo",             NULL,       NULL,           0,            1,          0,          0,          0,         -1,       0 },
 	{ "St",               NULL,       NULL,           0,            1,          0,          1,          0,         -1,       0 },
@@ -201,6 +204,7 @@ static const Key keys[] = {
     { MODKEY,                       XK_s,                     togglesticky,   {0} },
 	{ MODKEY,                       XK_0,                     view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,                     tag,            {.ui = ~0 } },
+	{ MODKEY|ShiftMask,             XK_t,                     focusTeam,       {.i = -1 } },
 	{ MODKEY,                       XK_comma,                 focusmon,       {.i = -1 } },
 	{ MODKEY,                       XK_period,                focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,                 tagmon,         {.i = -1 } },

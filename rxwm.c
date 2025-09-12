@@ -229,6 +229,7 @@ static void expose(XEvent *e);
 static void focus(Client *c);
 static void focusin(XEvent *e);
 static void focusmon(const Arg *arg);
+static void focusTeam(const Arg *arg);
 static void focusstack(const Arg *arg);
 static Atom getatomprop(Client *c, Atom prop);
 static int getrootptr(int *x, int *y);
@@ -1300,6 +1301,32 @@ focusin(XEvent *e)
 
 	if (selmon->sel && ev->window != selmon->sel->win)
 		setfocus(selmon->sel);
+}
+
+void 
+focusTeam(const Arg *arg) {
+    Monitor *m;
+
+    m = mons;  
+    if (!m) 
+        return;
+
+    if( m != selmon)
+    {
+        unfocus(selmon->sel, 0);
+        selmon = m;
+        focus(NULL);
+    }
+
+   const Arg a = {.ui = 1 << 7};
+   view(&a);
+   usleep(400000);
+   system("xdotool key Alt+r");
+   usleep(300000);
+   system("xdotool type 'Checking - AI Ninjas Night Warriors'");
+   usleep(300000);
+   system("xdotool key Return");
+
 }
 
 void
