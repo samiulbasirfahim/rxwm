@@ -18,18 +18,18 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;        /* 0 means no systray */
 static const int allowkill          = 1;        /* allow killing clients by default? */
 static const char *fonts[]          = {
-    "Victor Mono:weight=160:size=10.8",
-    "Symbols Nerd Font:size=12",
+    "Victor Mono:weight=160:size=11.5",
+    "Symbols Nerd Font:size=13",
 };
 static const int showbar            = 1;        /* 0 means no bar */
 static const int full_title_width   = 0;        /* 1 means title will took full width of bar */
 static const int empty_tags         = 0;        /* 0 means no empty tags */
-static const int topbar             = 0;        /* 0 means bottom bar */ 
+static const int topbar             = 1;        /* 0 means bottom bar */ 
 static const int user_bh            = 1;        /* 2 is the default spacing around the bar's font */
 static const int horizpadbar        = 0;        /* horizontal padding for statusbar */
 static const int vertpadbar         = 10;        /* vertical padding for statusbar */
-static const int vertpad            = 0;        /* vertical padding of bar */
-static const int sidepad            = 0;       /* horizontal padding of bar */
+static const int vertpad            = 10;        /* vertical padding of bar */
+static const int sidepad            = 10;       /* horizontal padding of bar */
 
 static char normfgcolor[]           = "#CDD6F4";
 static char normbgcolor[]           = "#222222";
@@ -62,6 +62,7 @@ static char *colors[][3] = {
 static const char *const autostart[] = {
   "picom", "-b", NULL,
   "dunst", NULL,
+  "dual_monitor", NULL,
   "load-wallpaper", NULL,
   "dwmblocks", NULL,
   "wired", NULL,
