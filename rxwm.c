@@ -1363,7 +1363,7 @@ void focusTeam(const Arg *arg) {
   usleep(350000);
   system("xdotool key Alt+r && xdotool key Return");
   usleep(800000);
-  system("xdotool type 'CHECKING'");
+  system("xdotool type 'CHECKING - AI STRIX'");
   sleep(1);
   const Arg workspace_arg = {.ui = current_tagset};
   view(&workspace_arg);
